@@ -9,7 +9,7 @@ struct process
     int burstTime;
 };
 
-int blocked[];
-int ready[];
-int running[1]; 
+struct process blocked[]; // - may not need.
+struct process ready[];
+struct process running[1]; 
 
