@@ -19,6 +19,7 @@ typedef struct Process
 {
     int pId;
     int burstTime;
+<<<<<<< HEAD
     int arrivalTime;
     int completionTime;
     int turnAroundTime;
@@ -201,3 +202,16 @@ int main(int argc, char *argv[]) {
 
 
 
+=======
+<<<<<<< HEAD
+};
+
+struct process blocked[]; // - may not need.
+struct process ready[];
+struct process running[1]; 
+
+=======
+    bool ready;
+}
+>>>>>>> 4343c3ec32c3ad6eda0fd3f1f2511a3ae48a4717
+>>>>>>> 9c04ebe8e3ebf50295e8897854b5c4e48a4dcea2
