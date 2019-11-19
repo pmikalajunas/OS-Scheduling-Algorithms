@@ -38,7 +38,7 @@ typedef struct ComparisonData
 // -------------------- LINKED LIST --------------------
 
 typedef struct Node {
-  void *data;
+  Process *process;
   struct Node *prev;
   struct Node *next;
 } Node;
@@ -59,7 +59,7 @@ Node *initialise_node(void)
         return NULL;
     }
 
-    newNode->data = NULL;
+    //newNode->process = NULL;
     newNode->next = NULL;
     newNode->prev = NULL;
 
@@ -99,13 +99,13 @@ LinkedList *initialise_linked_list(void)
 /* and set data stored at node to *data */
 /* should return a pointer to the new node */
 /* should return NULL if an error occurs */
-Node *append_linked_list(LinkedList *list, void *data) 
+Node *append_linked_list(LinkedList *list, Process *process) 
 {  
     Node *node;
 
 	  node = initialise_node();
 
-	  node->data = data;
+	  node->process = process;
 	  node->prev = list->tail;
 	  if(list->tail) {
 		  list->tail->next = node;
@@ -221,7 +221,6 @@ int main(int argc, char *argv[]) {
 
     
     for(int i = 1; i < argc; i += 2) {
-        printf("%s..", argv[i]);
         char *ptr;
         int burstTime = strtol(argv[i], &ptr, 10);
         int arrivalTime = strtol(argv[i + 1], &ptr, 10);
@@ -230,7 +229,7 @@ int main(int argc, char *argv[]) {
         append_linked_list(processQueue, newProcess(burstTime, arrivalTime));
     }
 
-    printf("(%p)", processQueue->head->data->burstTime);
+    printf("(%d)", processQueue->head->next->process->arrivalTime);
     
 /*
     while(1) {
