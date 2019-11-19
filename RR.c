@@ -19,7 +19,6 @@ typedef struct Process
 {
     int pId;
     int burstTime;
-<<<<<<< HEAD
     int arrivalTime;
     int completionTime;
     int turnAroundTime;
@@ -37,6 +36,17 @@ typedef struct ComparisonData
 
 
 // -------------------- LINKED LIST --------------------
+
+typedef struct Node {
+  void *data;
+  struct Node *prev;
+  struct Node *next;
+} Node;
+
+typedef struct LinkedList {
+  Node *head;
+  Node *tail;
+} LinkedList;
 
 /* create a new node */
 /* returns a pointer to the newly created node */
@@ -85,6 +95,52 @@ LinkedList *initialise_linked_list(void)
     return newList;
 }
 
+/* create and add node to the tail of linked list *list */
+/* and set data stored at node to *data */
+/* should return a pointer to the new node */
+/* should return NULL if an error occurs */
+Node *append_linked_list(LinkedList *list, void *data) 
+{  
+    Node *node;
+
+	  node = initialise_node();
+
+	  node->data = data;
+	  node->prev = list->tail;
+	  if(list->tail) {
+		  list->tail->next = node;
+	  }
+	  list->tail = node;
+	  if(!list->head)
+		  list->head = node;
+
+}
+
+/* remove head from linked list *list */
+/* print an error message and return if list is NULL or empty */
+void remove_head_linked_list(LinkedList *list)
+{
+    Node *oldNode;
+    if(!list) {
+        fprintf(stderr, "Error: Attempting to remove head from null linked list.\n");
+        return;
+    }
+    if(!list->head) {
+        fprintf(stderr, "Error: Attempting to remove head from empty linked list.\n");
+        return;
+    }
+    if(!list->head->next) { /* if only 1 elem */
+        free(list->head);
+    } else {
+        oldNode = list->head;
+        list->head = oldNode->next;
+        list->head->prev = NULL;
+        free(oldNode);
+    }
+
+}
+
+
 /* free memory for linked list *list */
 /* frees memory for all nodes in linked list and list itself */
 /* print an error message and return if list is NULL */
@@ -111,6 +167,7 @@ void free_linked_list(LinkedList *list)
 // -------------------- FUNCTIONS --------------------
 
 
+
 void roundRobin(Process *queue) {
 
     while(1) {
@@ -120,7 +177,7 @@ void roundRobin(Process *queue) {
 }
 
 
-Process *newProcess(int burstTime) {
+Process *newProcess(int burstTime, int arrivalTime) {
 
     // Allocating memory for a process, if available.
     Process *p = malloc(sizeof(Process));
@@ -131,6 +188,7 @@ Process *newProcess(int burstTime) {
     // Set the burst time, pId and return the value.
     p->pId = processCount;
     p->burstTime = burstTime;
+    p->arrivalTime = arrivalTime;
     return p;
 }
 
@@ -147,7 +205,7 @@ void memCheck(void *ptr) {
 int main(int argc, char *argv[]) {
 
   	// Allocate memory for process queue.
-  	Process* processQueue = (Process*) malloc(sizeof(Process) * queueLength);
+  	LinkedList *processQueue = initialise_linked_list();
 
     // If not even number of inputs.
     if((argc - 1) % 2 != 0) {
@@ -156,10 +214,23 @@ int main(int argc, char *argv[]) {
         printf("For example: RR 54 32 2 32 12 2\n");
         return 1;
     }
+
+    // check all int 
+    
+    //for(int i = 0 ; i < argc; i++) printf("[(%i) - %s]",i, argv[i]);
+
     
     for(int i = 1; i < argc; i += 2) {
-        // append to linked list.
+        printf("%s..", argv[i]);
+        char *ptr;
+        int burstTime = strtol(argv[i], &ptr, 10);
+        int arrivalTime = strtol(argv[i + 1], &ptr, 10);
+        
+        
+        append_linked_list(processQueue, newProcess(burstTime, arrivalTime));
     }
+
+    printf("(%p)", processQueue->head->data->burstTime);
     
 /*
     while(1) {
@@ -181,37 +252,15 @@ int main(int argc, char *argv[]) {
     }*/
   
   	// Free the memory which is not used.
-    if(processCount < queueLength) {
-        processQueue = (Process*) realloc(processQueue, sizeof(Process) * processCount);
-        memCheck(processQueue);
-    }
+    //if(processCount < queueLength) {
+        //processQueue = (Process*) realloc(processQueue, sizeof(Process) * processCount);
+      //  memCheck(processQueue);
+    //}
   
   
   	// Free the allocated memory.
-    free(processQueue);
+    // free(processQueue);
+    free_linked_list(processQueue);
 
 }
 
-
-
-
-
-
-
-
-
-
-
-=======
-<<<<<<< HEAD
-};
-
-struct process blocked[]; // - may not need.
-struct process ready[];
-struct process running[1]; 
-
-=======
-    bool ready;
-}
->>>>>>> 4343c3ec32c3ad6eda0fd3f1f2511a3ae48a4717
->>>>>>> 9c04ebe8e3ebf50295e8897854b5c4e48a4dcea2
