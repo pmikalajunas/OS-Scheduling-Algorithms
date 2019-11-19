@@ -225,40 +225,10 @@ int main(int argc, char *argv[]) {
         int burstTime = strtol(argv[i], &ptr, 10);
         int arrivalTime = strtol(argv[i + 1], &ptr, 10);
         
-        
         append_linked_list(processQueue, newProcess(burstTime, arrivalTime));
     }
-
-    printf("(%d)", processQueue->head->next->process->arrivalTime);
     
-/*
-    while(1) {
-        printf("Enter process %d's burst time: ", processCount);
-      
-      	int burst = getInt();
-      
-      	if(burst < 0) break;
-      	
-        if(processCount < queueLength) {
-            processQueue[processCount++] = *newProcess(burst);
-        } else {
-            // Allocate memory for extra processes.
-            queueLength *= INCREASE_FACTOR;
-            processQueue = (Process*) realloc(processQueue, sizeof(Process) * queueLength);
-            memCheck(processQueue);
-            processQueue[processCount++] = *newProcess(burst);
-        }
-    }*/
-  
-  	// Free the memory which is not used.
-    //if(processCount < queueLength) {
-        //processQueue = (Process*) realloc(processQueue, sizeof(Process) * processCount);
-      //  memCheck(processQueue);
-    //}
-  
-  
-  	// Free the allocated memory.
-    // free(processQueue);
+    // free process queue memory
     free_linked_list(processQueue);
 
 }
