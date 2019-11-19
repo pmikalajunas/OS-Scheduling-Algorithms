@@ -181,7 +181,7 @@ void roundRobin(Process *queue) {
 
 }
 
-
+// Allocate memory to new process and initialise it.
 Process *newProcess(int burstTime, int arrivalTime) {
 
     // Allocating memory for a process, if available.
@@ -206,6 +206,17 @@ void memCheck(void *ptr) {
     }
 }
 
+
+// Check if input string contains all integers.
+// Return true if all digits, false if not.
+bool isInt(char* input) {
+  for(int i = 0; i < strlen(input); i++) {
+    if(!isdigit(input[i])) {
+      return false;
+    }
+  }
+  return true;
+}
   
 int main(int argc, char *argv[]) {
 
@@ -228,6 +239,7 @@ int main(int argc, char *argv[]) {
       }
     }
     
+    // Append all inputs to linked list.
     for(int i = 1; i < argc; i += 2) {
         char *ptr;
         int burstTime = strtol(argv[i], &ptr, 10);
@@ -239,14 +251,4 @@ int main(int argc, char *argv[]) {
     // free process queue memory
     free_linked_list(processQueue);
 
-}
-
-
-bool isInt(char* input) {
-  for(int i = 0; i < strlen(input); i++) {
-    if(!isdigit(input[i])) {
-      return false;
-    }
-  }
-  return true;
 }
