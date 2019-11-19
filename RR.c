@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h> 
+#include <stdbool.h>
+#include <string.h> 
+#include <ctype.h>
 
 // -------------------- CONSTANTS -------------------- 
 int const TIME_QUANTUM = 20; // Fixed time quantum.
@@ -12,6 +14,9 @@ int const INCREASE_FACTOR = 2; // Factor by which queue length increases.
 int queueLength = 64; // May be resized, if exceded.
 int processCount = 0; // Incremented with each input
 // --------------------------------------------------- 
+
+// -------------- FUNCTION DEFINITIONS ---------------
+bool isInt(char*);
 
 
 // -------------------- STRUCTURES -------------------- 
@@ -216,9 +221,12 @@ int main(int argc, char *argv[]) {
     }
 
     // check all int 
-    
-    //for(int i = 0 ; i < argc; i++) printf("[(%i) - %s]",i, argv[i]);
-
+    for(int i = 1; i < argc; i++) {
+      if(!isInt(argv[i])) {
+        printf("(ERROR) All inputs need to be integers");
+        return 1;
+      }
+    }
     
     for(int i = 1; i < argc; i += 2) {
         char *ptr;
@@ -233,3 +241,12 @@ int main(int argc, char *argv[]) {
 
 }
 
+
+bool isInt(char* input) {
+  for(int i = 0; i < strlen(input); i++) {
+    if(!isdigit(input[i])) {
+      return false;
+    }
+  }
+  return true;
+}
