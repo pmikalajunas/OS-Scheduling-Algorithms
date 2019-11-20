@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h> 
 #include <ctype.h>
+#include "./LinkedList.h"
 
 // -------------------- CONSTANTS -------------------- 
 int const TIME_QUANTUM = 20; // Fixed time quantum.
@@ -10,7 +11,6 @@ int const INCREASE_FACTOR = 2; // Factor by which queue length increases.
 // --------------------------------------------------- 
 
 // -------------------- VARIABLES -------------------- 
-
 int queueLength = 64; // May be resized, if exceded.
 int processCount = 0; // Incremented with each input
 // --------------------------------------------------- 
@@ -18,164 +18,20 @@ int processCount = 0; // Incremented with each input
 // -------------- FUNCTION DEFINITIONS ---------------
 bool isInt(char*);
 
-
-// -------------------- STRUCTURES -------------------- 
-typedef struct Process
-{
-    int pId;
-    int burstTime;
-    int arrivalTime;
-    int completionTime;
-    int turnAroundTime;
-    int waitingTime;
-    
-} Process;
-
-typedef struct ComparisonData
-{
-    int averageTurnaroundTime;
-    int averageWaitingTime;
-    int throughput;
-} ComparisonData;
-// --------------------------------------------------- 
-
-
-// -------------------- LINKED LIST --------------------
-
-typedef struct Node {
-  Process *process;
-  struct Node *prev;
-  struct Node *next;
-} Node;
-
-typedef struct LinkedList {
-  Node *head;
-  Node *tail;
-} LinkedList;
-
-/* create a new node */
-/* returns a pointer to the newly created node */
-/* print an error message and return NULL if an error occurs */
-Node *initialise_node(void)
-{
-    Node *newNode = (Node*) malloc(sizeof(Node));
-    if(!newNode){
-        fprintf(stderr, "(initialise_node) Malloc failed at line: (%d)\n", __LINE__);
-        return NULL;
-    }
-
-    //newNode->process = NULL;
-    newNode->next = NULL;
-    newNode->prev = NULL;
-
-    return newNode;
-}
-
-/* free memory for node *node */
-/* print an error message and return if node is NULL */
-void free_node(Node *node)
-{
-    if(!node){
-        fprintf(stderr, "(free_node) Node was NULL at line: (%d)\n", __LINE__);
-        return;
-    }
-
-    free(node);
-}
-
-/* create a new linked list */
-/* returns a pointer to the newly created list */
-/* print an error message and return NULL if an error occurs */
-LinkedList *initialise_linked_list(void)
-{
-    LinkedList *newList = (LinkedList*) malloc(sizeof(LinkedList));
-
-    if(!newList){
-        fprintf(stderr, "(initialise_linked_list) Malloc failed at line: (%d)\n", __LINE__);
-        return NULL;
-    }
-
-    newList->head = NULL;
-    newList->tail = NULL;
-    return newList;
-}
-
-/* create and add node to the tail of linked list *list */
-/* and set data stored at node to *data */
-/* should return a pointer to the new node */
-/* should return NULL if an error occurs */
-Node *append_linked_list(LinkedList *list, Process *process) 
-{  
-    Node *node;
-
-	  node = initialise_node();
-
-	  node->process = process;
-	  node->prev = list->tail;
-	  if(list->tail) {
-		  list->tail->next = node;
-	  }
-	  list->tail = node;
-	  if(!list->head)
-		  list->head = node;
-
-}
-
-/* remove head from linked list *list */
-/* print an error message and return if list is NULL or empty */
-void remove_head_linked_list(LinkedList *list)
-{
-    Node *oldNode;
-    if(!list) {
-        fprintf(stderr, "Error: Attempting to remove head from null linked list.\n");
-        return;
-    }
-    if(!list->head) {
-        fprintf(stderr, "Error: Attempting to remove head from empty linked list.\n");
-        return;
-    }
-    if(!list->head->next) { /* if only 1 elem */
-        free(list->head);
-    } else {
-        oldNode = list->head;
-        list->head = oldNode->next;
-        list->head->prev = NULL;
-        free(oldNode);
-    }
-
-}
-
-
-/* free memory for linked list *list */
-/* frees memory for all nodes in linked list and list itself */
-/* print an error message and return if list is NULL */
-void free_linked_list(LinkedList *list)
-{
-    /* is list NULL??? */
-    if(!list){
-        fprintf(stderr, "(free_linked_list) List was NULL at line: (%d)\n", __LINE__);
-        return;
-    }
-
-    /* freeing each node */
-    while(list->head){
-        Node *temp = list->head;
-        list->head = list->head->next;
-        /* freeing the node */
-        free_node(temp);
-    }
-
-    /* ant the list itself... */
-    free(list);
-}
-
 // -------------------- FUNCTIONS --------------------
 
 
 
 void roundRobin(Process *queue) {
 
+    // While process queue is not empty.
     while(1) {
+        // Remove process, if it finished executing.
+        if(remove_head_linked_list) {
+
+        }
+
+        
         
     }
 
