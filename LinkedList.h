@@ -33,6 +33,15 @@ Node *initialise_node(void)
     return newNode;
 }
 
+/* True - linked list is empty */
+/* False - linked list is not empty */
+bool linked_list_empty(LinkedList *list) {
+    if(!list->head) {
+        return true;
+    }
+    return false;
+}
+
 /* free memory for node *node */
 /* print an error message and return if node is NULL */
 void free_node(Node *node)
@@ -116,10 +125,10 @@ Node *remove_head_linked_list(LinkedList *list)
 
     /* if we are left with one element... */
     if(!list->head->next){
-        free_node(list->head);
+        Node *node = list->head;
         list->head = NULL;
         list->tail = NULL;
-        return NULL;
+        return node;
     }
 
     /* Pointing head to the next node */
