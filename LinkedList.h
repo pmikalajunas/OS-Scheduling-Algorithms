@@ -5,14 +5,14 @@
 // -------------------- LINKED LIST --------------------
 
 typedef struct Node {
-  Process *process;
-  struct Node *prev;
-  struct Node *next;
+    Process *process;
+    struct Node *prev;
+    struct Node *next;
 } Node;
 
 typedef struct LinkedList {
-  Node *head;
-  Node *tail;
+    Node *head;
+    Node *tail;
 } LinkedList;
 
 /* create a new node */
@@ -121,7 +121,7 @@ Node *remove_head_linked_list(LinkedList *list)
     if(!list || !list->head){
         fprintf(stderr, "(remove_head_linked_list) List was (NULL/empty) at line: (%d)\n", __LINE__);
         return NULL;
-    }    
+    }
 
     /* if we are left with one element... */
     if(!list->head->next){
@@ -142,6 +142,20 @@ Node *remove_head_linked_list(LinkedList *list)
 
     return node;
 }
+
+/* Returns the head of the linked list */
+/* Head is not discarded from the linked list! */
+/* print an error message and return if list is NULL or empty */
+Node *peek_head_linked_list(LinkedList *list)
+{
+    /* is list NULL??? is it empty?? */
+    if(!list || !list->head){
+        fprintf(stderr, "(peek_head_linked_list) List was (NULL/empty) at line: (%d)\n", __LINE__);
+        return NULL;
+    }
+    return list->head;
+}
+
 
 
 /* free memory for linked list *list */
