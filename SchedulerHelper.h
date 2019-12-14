@@ -5,7 +5,7 @@ int processCount = 0; // Incremented with each input.
 
 
 // -------------------- CONSTANTS --------------------
-int const TIME_QUANTUM = 2; // Fixed time quantum.
+int const TIME_QUANTUM = 3; // Fixed time quantum.
 int const INCREASE_FACTOR = 2; // Factor by which queue length increases.
 // ---------------------------------------------------
 
@@ -23,6 +23,12 @@ Process *newProcess(int burstTime, int arrivalTime) {
     p->pId = processCount++;
     p->burstTime = burstTime;
     p->arrivalTime = arrivalTime;
+    p->remainingTime = burstTime;
+    p->completionTime = 0;
+    p->turnAroundTime = 0;
+    p->waitingTime = 0;
+    p->timeSpentProcessing = 0;
+
     return p;
 }
 
@@ -53,12 +59,6 @@ bool verifyAllInputsInt(int argc,  char **argv) {
 
 }
 
-
-bool isEvenNumberOfArguments(int argc) {
-    return (argc - 1) % 2 != 0;
-}
-
-
 // Checks if the current process is ready to be discarded from waiting queue.
 // If arrival time meets the current time, process gets removed and added to the processing queue.
 void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue, int timeElapsed) {
@@ -67,14 +67,19 @@ void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue, int time
     while(candidateNode && candidateNode->process->arrivalTime <= timeElapsed) {
         candidateNode = remove_head_linked_list(waitingQueue);
         append_linked_list(processQueue, candidateNode->process);
+        printf("\n+++++++++++++++++++++++++++++++++++++++++++++++\n");
         printf("\nNode (ID: %d) is added from the waiting queue\n",
                 candidateNode->process->pId);
         printf("Time elapsed: %d\n", candidateNode->process->arrivalTime);
+        printf("\n+++++++++++++++++++++++++++++++++++++++++++++++\n");
         candidateNode = peek_head_linked_list(waitingQueue);
     }
 }
 
 
+bool isEvenNumberOfArguments(int argc) {
+    return (argc - 1) % 2 != 0;
+}
 
 // -------------------- PRINTING STUFF --------------------
 
@@ -89,6 +94,7 @@ void printProcessInfo(Process *process) {
     printf("    - Burst time: (%d)\n", process->burstTime);
     printf("    - Arrival time: (%d)\n", process->arrivalTime);
     printf("    - Time Spent Processing: (%d)\n", process->timeSpentProcessing);
+    printf("    - Remaining burst time: (%d)\n", process->remainingTime);
 }
 
 
@@ -112,7 +118,7 @@ void printProcessTable(LinkedList *completedQueue) {
     printf("\n+-------------------------------------------------------------------------------------+\n");
     printf("|                                  Executed Processes                                 |\n");
     printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
-    printf("|  ID | Waiting Time    | Completion Time | Turn-Around Time | Burst Time | Arrival Time |\n");
+    printf("|  ID | Completion Time | Waiting Time | Turn-Around Time | Burst Time | Arrival Time |\n");
 
     // The following line will be used to separate processes from each other.
     char line[] = "+-----+-----------------+--------------+------------------+------------+--------------+\n";
@@ -120,11 +126,22 @@ void printProcessTable(LinkedList *completedQueue) {
 
     while(!linked_list_empty(completedQueue)) {
         Node *node = remove_head_linked_list(completedQueue);
-        printf("|%5d|%14d|%17d|%18d|%12d|%14d|\n",
-                node->process->pId, node->process->waitingTime,
-                node->process->completionTime, node->process->turnAroundTime,
+        printf("|%5d|%17d|%14d|%18d|%12d|%14d|\n",
+                node->process->pId, node->process->completionTime,
+                node->process->waitingTime, node->process->turnAroundTime,
                 node->process->burstTime, node->process->arrivalTime);
         printf("%s", line);
     }    
 
+}
+
+
+/**
+ * Prints process ID and time elapsed.
+ * Used in both RR and FCFS to print information on each iteration.
+ * */
+void printProcessingHeader(int timeElapsed, Node *node) {
+    printf("\ntimeElapsed: (%d)", timeElapsed);
+    printf("\n____________________________________________________________________________\n");
+    printf("\nProcess (ID: %d) is being processed\n", node->process->pId);
 }

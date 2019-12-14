@@ -8,6 +8,7 @@ typedef struct Process
     int turnAroundTime;
     int waitingTime;
     int timeSpentProcessing;
+    int remainingTime;
 } Process;
 
 typedef struct ComparisonData

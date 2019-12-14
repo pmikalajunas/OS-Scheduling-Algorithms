@@ -113,13 +113,19 @@ Node *append_linked_list(LinkedList *list, Process *process)
     return newNode;
 }
 
+void merge_linked_lists(LinkedList *first_list, LinkedList *second_list) {
+    first_list->tail->next = second_list->head;
+    second_list->head->prev = first_list->tail;
+    first_list->tail = second_list->tail;
+    first_list->tail->next = NULL;
+}
+
 /* remove head from linked list *list */
 /* print an error message and return if list is NULL or empty */
 Node *remove_head_linked_list(LinkedList *list)
 {
     /* is list NULL??? is it empty?? */
     if(!list || !list->head){
-        fprintf(stderr, "(remove_head_linked_list) List was (NULL/empty) at line: (%d)\n", __LINE__);
         return NULL;
     }
 

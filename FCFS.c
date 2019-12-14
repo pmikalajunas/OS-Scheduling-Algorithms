@@ -20,7 +20,7 @@ LinkedList* firstComeFirstServe(LinkedList *processQueue, LinkedList *waitingQue
     // A list of processes which have finished executing.
     LinkedList *completedQueue = initialise_linked_list();
 
-    while(!linked_list_empty(processQueue)){
+    while(!linked_list_empty(processQueue) && !linked_list_empty()){
 
         // Getting the head node of the queue.
         Node *node = remove_head_linked_list(processQueue);
@@ -41,9 +41,9 @@ LinkedList* firstComeFirstServe(LinkedList *processQueue, LinkedList *waitingQue
 
         node->process->completionTime = timeElapsed;
         node->process->turnAroundTime = node->process->completionTime - node->process->arrivalTime;
-        
-        node->process->waitingTime = node->process->turnAroundTime - node->process->burstTime;
-
+        // waiting  + burst
+        node->process->waitingTime = timeElapsed - node->process->burstTime;
+      // completeion  - arrival 
         printf("Process (ID: %d) has finished, timeElapsed: (%d)\n",
               node->process->pId, timeElapsed);
         printProcessInfo(node->process);
@@ -79,7 +79,11 @@ int main(int argc, char **argv){
         int burstTime = strtol(argv[i], &ptr, 10);
         int arrivalTime = strtol(argv[i + 1], &ptr, 10);
         
-        append_linked_list(processQueue, newProcess(burstTime, arrivalTime));
+        if(arrivalTime == 0) {
+            append_linked_list(processQueue, newProcess(burstTime, arrivalTime));
+        } else {
+            append_linked_list(waitingQueue, newProcess(burstTime, arrivalTime));
+        }
     }
 
     LinkedList *completedQueue = firstComeFirstServe(processQueue, waitingQueue);
