@@ -53,7 +53,7 @@ Discards process by assigning completion time and freeing allocated memory.
 Prints process info.
 */
 void discardProcess(Node *node, int timeElapsed) {
-    node->process->completionTime = timeElapsed - node->process->arrivalTime;
+    node->process->completionTime = timeElapsed;
     printProcessInfo(node->process);
     free(node);
 }
@@ -62,9 +62,9 @@ void discardProcess(Node *node, int timeElapsed) {
 void printProcessedNodeData(Node *node, int timeElapsed) {
     printf("\nProcess (ID: %d) left CPU, it has been processed for %ds \n",
            node->process->pId, TIME_QUANTUM);
-    printf("Time left: %ds\n", node->process->burstTime);
+    printf("Remaining burst time: %ds\n", node->process->burstTime);
     printf("Process spent %ds in total\n", node->process->timeSpentProcessing);
-    printf("Elapsed time: %ds\n", timeElapsed);
+    printf("Elapsed time till now: %ds\n", timeElapsed);
 }
 
 // Checks if the current process is ready to be discarded from waiting queue.
@@ -72,24 +72,31 @@ void printProcessedNodeData(Node *node, int timeElapsed) {
 void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue, int timeElapsed) {
 
     Node *candidateNode = peek_head_linked_list(waitingQueue);
-    if(candidateNode && candidateNode->process->arrivalTime <= timeElapsed) {
+    while(candidateNode && candidateNode->process->arrivalTime <= timeElapsed) {
         candidateNode = remove_head_linked_list(waitingQueue);
         append_linked_list(processQueue, candidateNode->process);
-        printf("\nNode (ID: %d) was added from the waiting queue\n",
+        printf("\nNode (ID: %d) is added from the waiting queue\n",
                 candidateNode->process->pId);
-        printf("Time elapsed: %d", timeElapsed);
+        printf("Time elapsed: %d\n", candidateNode->process->arrivalTime);
+        candidateNode = peek_head_linked_list(waitingQueue);
     }
 }
 
+// TODO: we might simulate actual CPU clock ticks
 void roundRobin(LinkedList *processQueue, LinkedList *waitingQueue) {
 
     int timeElapsed = 0;
+    int count = 0;
 
     // While process queue is not empty.
     while(!linked_list_empty(processQueue)) {
 
         // Getting the head node of the queue.
         Node *node = remove_head_linked_list(processQueue);
+
+        printf("Iteration: (%d) timeElapsed: (%d)", count++, timeElapsed);
+        printf("\n____________________________________________________________________________\n");
+        printf("\nProcess (ID: %d) is being processed\n", node->process->pId);
 
         // Subtracting TIME_QUANTUM from burst time gives us process' remaining time.
         int burstTimeTemp = node->process->burstTime;
@@ -111,6 +118,9 @@ void roundRobin(LinkedList *processQueue, LinkedList *waitingQueue) {
             node->process->burstTime -= TIME_QUANTUM;
 
             printProcessedNodeData(node, timeElapsed);
+
+             // Process is put at the end of the processing queue.
+            append_linked_list(processQueue, node->process);
         } else {
             int executionTime = abs(TIME_QUANTUM + burstTimeTemp);
             timeElapsed += executionTime;
@@ -121,18 +131,16 @@ void roundRobin(LinkedList *processQueue, LinkedList *waitingQueue) {
             node->process->timeSpentProcessing += executionTime;
 
             discardProcess(node, timeElapsed);
-            continue;
         }
 
-        // Otherwise, put process to the end of the queue.
-        append_linked_list(processQueue, node->process);
+
+        printf("\n____________________________________________________________________________\n");
     }
 
 }
 
 /* Prints all the information about the process. */
 void printProcessInfo(Process *process) {
-    printf("\n__________________________________________\n");
     printf("Process (%d) has finshed executing\n\n", process->pId);
     printf("    - Completion time: (%d)\n", process->completionTime);
     printf("    - Turn-around time: (%d)\n", process->turnAroundTime);
@@ -140,7 +148,6 @@ void printProcessInfo(Process *process) {
     printf("    - Burst time: (%d)\n", process->burstTime);
     printf("    - Arrival time: (%d)\n", process->arrivalTime);
     printf("    - Time Spent Processng: (%d)\n", process->timeSpentProcessing);
-    printf("__________________________________________\n");
 }
 
 // Allocate memory to new process and initialise it.

@@ -150,7 +150,6 @@ Node *peek_head_linked_list(LinkedList *list)
 {
     /* is list NULL??? is it empty?? */
     if(!list || !list->head){
-        fprintf(stderr, "(peek_head_linked_list) List was (NULL/empty) at line: (%d)\n", __LINE__);
         return NULL;
     }
     return list->head;
