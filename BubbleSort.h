@@ -8,18 +8,18 @@ void swap(Node *a, Node *b)
 } 
 
 
+
 void bubbleSort(Node *start) 
 { 
     int swapped, i; 
     Node *ptr1; 
     Node *lptr = NULL; 
   
-    /* Checking for empty list */
+    // If list is empty, we don't move any further.
     if (start == NULL) {
         return; 
     }
         
-  
     do
     { 
         swapped = 0; 

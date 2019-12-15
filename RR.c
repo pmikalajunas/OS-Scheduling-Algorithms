@@ -6,33 +6,12 @@
 #include <ctype.h>
 #include "./LinkedList.h"
 #include "./SchedulerHelper.h"
-#include "./BubbleSort.h"
+
 
 // -------------- FUNCTION DEFINITIONS ---------------
 LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue);
-void discardProcess(Node *node, int timeElapsed, LinkedList *completedQueue);
 
 // -------------------- FUNCTIONS --------------------
-
-
-/*
-Discards process by assigning completion time and turn around time.
-Prints process info and adds process into the queue of completed processes.
-*/
-void discardProcess(Node *node, int timeElapsed, LinkedList *completedQueue) {
-  
-    // We don't want to leave remaining time being negative.
-    node->process->remainingTime = 0;
-
-    node->process->completionTime = timeElapsed;
-    node->process->turnAroundTime = timeElapsed - node->process->arrivalTime;
-    node->process->waitingTime = node->process->turnAroundTime - node->process->burstTime;
-    printf("Process (ID: %d) has finished, timeElapsed: (%d)\n",
-            node->process->pId, timeElapsed);
-    printProcessInfo(node->process);
-    append_linked_list(completedQueue, node->process);
-    free(node);
-}
 
 
 /**
@@ -57,7 +36,7 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue) {
     // We have to keep the algorithm until we have processes left in either process or waiting queue.
     while(!linked_list_empty(processQueue) || !linked_list_empty(waitingQueue)) {
 
-        // Add the node from the waiting queue (if it's ready).
+        // Adding node from waiting queue, before taking one from processQueue.
         addWaitingNode(waitingQueue, processQueue, timeElapsed);
 
         // Getting the head node of the queue.
@@ -74,7 +53,8 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue) {
         // Retrieving remaining time considering the current iteration.
         int remainingTime = node->process->remainingTime - timeSpentOnIteration;
 
-        // We execute current process and add nodes from the waiting queue in the meantime.
+        // We keep running through CPU cycles while process is being processed.
+        // We check if there are nodes in the waiting queue and we make sure TIME_QUANTUM is not exeeded.
         while(remainingTime && (TIME_QUANTUM > timeSpentOnIteration)) {
             timeSpentOnIteration++;
             timeElapsed++;
@@ -104,8 +84,7 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue) {
 
         // Resetting time spent on iteration, next process will take turn.
         timeSpentOnIteration = 0;
-
-        printf("\n____________________________________________________________________________\n");
+ 
     }
     return completedQueue;
 }
@@ -131,18 +110,7 @@ int main(int argc, char *argv[]) {
     if(!verifyAllInputsInt(argc,  argv)) return 1;
 
     // Processes with arrival time goes to waiting queue, ones without to the processing queue.
-    for(int i = 1; i < argc; i += 2) {
-        char *ptr;
-        int burstTime = (int) strtol(argv[i], &ptr, 10);
-        int arrivalTime = (int) strtol(argv[i + 1], &ptr, 10);
-
-        if(arrivalTime == 0) {
-            append_linked_list(processQueue, newProcess(burstTime, arrivalTime));
-        } else {
-            append_linked_list(waitingQueue, newProcess(burstTime, arrivalTime));
-        }
-
-    }
+    readCommandLineArguments(argc, argv, processQueue, waitingQueue);
 
     // Sort the list of processes by their arrival time.
     // Allows us to just check the head each time.

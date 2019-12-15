@@ -14,45 +14,56 @@ LinkedList* firstComeFirstServe(LinkedList *processQueue, LinkedList *waitingQue
 
 LinkedList* firstComeFirstServe(LinkedList *processQueue, LinkedList *waitingQueue){
 
+    // timeElapsed is a simulation of CPU cycles, every iteration is one CPU clock cycle
+    // 1 CPU Clock Cycle = 1ms
     int timeElapsed = 0;
-    int count = 0;
+    // Defines how much time we spent executing the current process.
+    int timeSpentOnIteration = 0;
 
     // A list of processes which have finished executing.
     LinkedList *completedQueue = initialise_linked_list();
 
-    while(!linked_list_empty(processQueue) && !linked_list_empty()){
+    while(!linked_list_empty(processQueue) || !linked_list_empty(waitingQueue)){
+
+        // Adding node from waiting queue, before taking one from processQueue.
+        addWaitingNode(waitingQueue, processQueue, timeElapsed);
 
         // Getting the head node of the queue.
         Node *node = remove_head_linked_list(processQueue);
 
-        printf("\nIteration: (%d) timeElapsed: (%d)", count++, timeElapsed);
-        printf("\n____________________________________________________________________________\n");
-        printf("\nProcess (ID: %d) is being processed\n", node->process->pId);
-        
+        // If processing queue is empty, we keep on going with another CPU cycle.
+        if(!node) {           
+            printEmptyQueueError(timeElapsed++);
+            continue;
+        }
 
-        // Calculating waiting time and the total time elapsed.
-   //  node->process->waitingTime = timeElapsed - node->process->arrivalTime;
-        timeElapsed += node->process->burstTime;
+        printProcessingHeader(timeElapsed, node);
 
-        // Add the node from the waiting queue (if it's ready).
-        addWaitingNode(waitingQueue, processQueue, timeElapsed);
+
+        // Retrieving remaining time considering the current iteration.
+        int remainingTime = node->process->remainingTime - timeSpentOnIteration;
+
+        // We keep running through CPU cycles while process is being processed.
+        // We check if there are nodes in the waiting queue.
+        while(remainingTime) {
+            timeSpentOnIteration++;
+            timeElapsed++;
+            remainingTime = node->process->remainingTime - timeSpentOnIteration;
+            printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
+             timeElapsed, timeSpentOnIteration, remainingTime);
+
+            addWaitingNode(waitingQueue, processQueue, timeElapsed);
+        }
+        printf("\n____________________________________________________________________________\n"); 
+
+
+ 
 
         node->process->timeSpentProcessing = node->process->burstTime;
+        discardProcess(node, timeElapsed, completedQueue);
+        // Resetting time spent on iteration, next process will take turn.
+        timeSpentOnIteration = 0;
 
-        node->process->completionTime = timeElapsed;
-        node->process->turnAroundTime = node->process->completionTime - node->process->arrivalTime;
-        // waiting  + burst
-        node->process->waitingTime = timeElapsed - node->process->burstTime;
-      // completeion  - arrival 
-        printf("Process (ID: %d) has finished, timeElapsed: (%d)\n",
-              node->process->pId, timeElapsed);
-        printProcessInfo(node->process);
-
-        append_linked_list(completedQueue, node->process);
-
-        free(node);
-
-        printf("\n____________________________________________________________________________\n");
     }
 
     return completedQueue;
@@ -73,18 +84,12 @@ int main(int argc, char **argv){
     // Ensure all inputs are integers
     if(!verifyAllInputsInt(argc,  argv)) return 1;
 
-    // Append all inputs to linked list.
-    for(int i = 1; i < argc; i += 2) {
-        char *ptr;
-        int burstTime = strtol(argv[i], &ptr, 10);
-        int arrivalTime = strtol(argv[i + 1], &ptr, 10);
-        
-        if(arrivalTime == 0) {
-            append_linked_list(processQueue, newProcess(burstTime, arrivalTime));
-        } else {
-            append_linked_list(waitingQueue, newProcess(burstTime, arrivalTime));
-        }
-    }
+    // Processes with arrival time goes to waiting queue, ones without to the processing queue.
+    readCommandLineArguments(argc, argv, processQueue, waitingQueue);
+
+    // Sort the list of processes by their arrival time.
+    // Allows us to just check the head each time.
+    bubbleSort(waitingQueue->head);
 
     LinkedList *completedQueue = firstComeFirstServe(processQueue, waitingQueue);
 
