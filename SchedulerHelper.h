@@ -20,7 +20,7 @@ int timeElapsed = 0;
 
 
 // -------------------- CONSTANTS --------------------
-int const TIME_QUANTUM = 3; // Fixed time quantum.
+int const TIME_QUANTUM = 10; // Fixed time quantum.
 int const INCREASE_FACTOR = 2; // Factor by which queue length increases.
 int const INPUT_ERROR = 1; // Input error code, if the cmd input is incorrect.
 int const SUCCESSFUL_EXECUTION = 0; // Returned with successful execution
@@ -33,6 +33,7 @@ void printGuidelines();
 void printProcessTable(LinkedList *completedQueue);
 void printProcessingHeader(int timeElapsed, Node *node);
 void printEmptyQueueError(int timeElapsed);
+void printComparisonData(LinkedList *completedQueue);
 
 Process *newProcess(int burstTime, int arrivalTime);
 bool isInt(char* input);
@@ -219,6 +220,8 @@ int executeSchedulingAlgorithm(LinkedList* (*f)(LinkedList*, LinkedList*, Linked
 
     printProcessTable(completedQueue);
 
+    printComparisonData(completedQueue);
+
     // Free the allocated memory for both queues.
     free_linked_list(processQueue);
     free_linked_list(waitingQueue);
@@ -240,6 +243,43 @@ bool isEvenNumberOfArguments(int argc) {
 //
 /////////////////////////////////////////////////////////////////////////////
 
+
+void printComparisonData(LinkedList *completedQueue) {
+    ComparisonData data;
+    Node *curProcess = peek_head_linked_list(completedQueue);
+    float totalNodes = 0,
+          totalTurnaroundTime = 0,
+          totalWaitingTime = 0,
+          totalCompletionTime = 0,
+          totalBurstTime = 0,
+          totalArrivalTime = 0;
+
+    do {
+        totalNodes++;
+        totalTurnaroundTime += curProcess->process->turnAroundTime;
+        totalWaitingTime += curProcess->process->waitingTime;
+        totalCompletionTime += curProcess->process->completionTime;
+        totalBurstTime += curProcess->process->burstTime;
+        totalArrivalTime += curProcess->process->arrivalTime;
+        
+    } while(curProcess = curProcess->next);
+
+    data.averageTurnaroundTime = totalTurnaroundTime / totalNodes;
+    data.averageWaitingTime = totalWaitingTime / totalNodes;
+    data.averageCompletionTime = totalCompletionTime / totalNodes;
+    data.averageBurstTime = totalBurstTime / totalNodes;
+    data.averageArrivalTime = totalArrivalTime / totalNodes;
+
+    printf("________________________________________________\n");
+    printf("                     Statistics                 \n");
+    printf(" Average Turnaround Time = ( %f )\n", data.averageTurnaroundTime);
+    printf(" Average Waiting Time = ( %f )\n", data.averageWaitingTime);
+    printf(" Average Completion Time = ( %f )\n", data.averageCompletionTime);
+    printf(" Average Burst Time = ( %f )\n", data.averageBurstTime);
+    printf(" Average Arrival Time = ( %f )\n", data.averageArrivalTime);
+    printf("________________________________________________\n");
+
+}
 
 /**
  * Prints information about the node which was added from the waiting queue.
@@ -293,14 +333,15 @@ void printProcessTable(LinkedList *completedQueue) {
     char line[] = "+-----+-----------------+--------------+------------------+------------+--------------+\n";
     printf("%s", line);
 
-    while(!linked_list_empty(completedQueue)) {
-        Node *node = remove_head_linked_list(completedQueue);
+    Node *node = peek_head_linked_list(completedQueue);
+
+    do {
         printf("|%5d|%17d|%14d|%18d|%12d|%14d|\n",
                 node->process->pId, node->process->completionTime,
                 node->process->waitingTime, node->process->turnAroundTime,
                 node->process->burstTime, node->process->arrivalTime);
         printf("%s", line);
-    }    
+    } while(node = node->next); 
 
 }
 

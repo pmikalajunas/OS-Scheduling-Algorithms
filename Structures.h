@@ -13,8 +13,10 @@ typedef struct Process
 
 typedef struct ComparisonData
 {
-    int averageTurnaroundTime;
-    int averageWaitingTime;
-    int throughput;
+    float averageBurstTime;
+    float averageArrivalTime;
+    float averageTurnaroundTime;
+    float averageWaitingTime;
+    float averageCompletionTime;
 } ComparisonData;
 // --------------------------------------------------- 
