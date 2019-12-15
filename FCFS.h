@@ -5,8 +5,6 @@
 #endif
 
 
-
-
 LinkedList* firstComeFirstServed(LinkedList *processQueue, LinkedList *waitingQueue, LinkedList *NOTUSED){
 
 
@@ -27,6 +25,7 @@ LinkedList* firstComeFirstServed(LinkedList *processQueue, LinkedList *waitingQu
         // If processing queue is empty, we keep on going with another CPU cycle.
         if(!node) {           
             printEmptyQueueError();
+            timeElapsed++;
             continue;
         }
 
@@ -42,15 +41,17 @@ LinkedList* firstComeFirstServed(LinkedList *processQueue, LinkedList *waitingQu
             timeSpentOnIteration++;
             timeElapsed++;
             remainingTime = node->process->remainingTime - timeSpentOnIteration;
+
+            if(node->process->remainingTime == node->process->burstTime) {
+                node->process->responseTime = timeElapsed - node->process->arrivalTime;
+            }
+
             printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
              timeElapsed, timeSpentOnIteration, remainingTime);
 
             addWaitingNode(waitingQueue, processQueue);
         }
         printf("\n____________________________________________________________________________\n"); 
-
-
- 
 
         node->process->timeSpentProcessing = node->process->burstTime;
         discardProcess(node, completedQueue);

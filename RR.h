@@ -51,6 +51,11 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, Linke
             timeSpentOnIteration++;
             timeElapsed++;
             remainingTime = node->process->remainingTime - timeSpentOnIteration;
+
+            if(node->process->remainingTime == node->process->burstTime) {
+                node->process->responseTime = timeElapsed - node->process->arrivalTime;
+            }
+
             printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
              timeElapsed, timeSpentOnIteration, remainingTime);
 

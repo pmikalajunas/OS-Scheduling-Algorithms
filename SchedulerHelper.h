@@ -20,7 +20,7 @@ int timeElapsed = 0;
 
 
 // -------------------- CONSTANTS --------------------
-int const TIME_QUANTUM = 3; // Fixed time quantum.
+int const TIME_QUANTUM = 10; // Fixed time quantum.
 int const INCREASE_FACTOR = 2; // Factor by which queue length increases.
 int const INPUT_ERROR = 1; // Input error code, if the cmd input is incorrect.
 int const SUCCESSFUL_EXECUTION = 0; // Returned with successful execution
@@ -252,7 +252,8 @@ void printComparisonData(LinkedList *completedQueue) {
           totalWaitingTime = 0,
           totalCompletionTime = 0,
           totalBurstTime = 0,
-          totalArrivalTime = 0;
+          totalArrivalTime = 0,
+          totalResponseTime;
 
     do {
         totalNodes++;
@@ -261,6 +262,7 @@ void printComparisonData(LinkedList *completedQueue) {
         totalCompletionTime += curProcess->process->completionTime;
         totalBurstTime += curProcess->process->burstTime;
         totalArrivalTime += curProcess->process->arrivalTime;
+        totalResponseTime += curProcess->process->responseTime;
         
     } while(curProcess = curProcess->next);
 
@@ -269,6 +271,7 @@ void printComparisonData(LinkedList *completedQueue) {
     data.averageCompletionTime = totalCompletionTime / totalNodes;
     data.averageBurstTime = totalBurstTime / totalNodes;
     data.averageArrivalTime = totalArrivalTime / totalNodes;
+    data.averageResponseTime = totalResponseTime / totalNodes;
 
     printf("________________________________________________\n");
     printf("                     Statistics                 \n");
@@ -277,6 +280,7 @@ void printComparisonData(LinkedList *completedQueue) {
     printf(" Average Completion Time = ( %f )\n", data.averageCompletionTime);
     printf(" Average Burst Time = ( %f )\n", data.averageBurstTime);
     printf(" Average Arrival Time = ( %f )\n", data.averageArrivalTime);
+    printf(" Average Response Time = ( %f )\n" , data.averageResponseTime);
     printf("________________________________________________\n");
 
 }

@@ -9,6 +9,7 @@ typedef struct Process
     int waitingTime;
     int timeSpentProcessing;
     int remainingTime;
+    int responseTime;
 } Process;
 
 typedef struct ComparisonData
@@ -18,5 +19,6 @@ typedef struct ComparisonData
     float averageTurnaroundTime;
     float averageWaitingTime;
     float averageCompletionTime;
+    float averageResponseTime;
 } ComparisonData;
 // --------------------------------------------------- 
