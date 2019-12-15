@@ -53,10 +53,13 @@ int main() {
 
 
     completedQueue = roundRobin(RRQueue, waitingQueue, FCFSQueue);
+    printf("\n_________________________________________________________\n");
+    printf("Round Robin finished executing\n");
+    printf("\n_________________________________________________________\n");
     completedQueue2 = firstComeFirstServe(FCFSQueue, waitingQueue);
     
     
-    merge_linked_lists(completedQueue, completedQueue2);
+    completedQueue = merge_linked_lists(completedQueue, completedQueue2);
 
     printProcessTable(completedQueue);
 

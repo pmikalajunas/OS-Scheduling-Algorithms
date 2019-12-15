@@ -16,7 +16,7 @@ int processCount = 0; // Incremented with each input.
 
 
 // -------------------- CONSTANTS --------------------
-int const TIME_QUANTUM = 100; // Fixed time quantum.
+int const TIME_QUANTUM = 3; // Fixed time quantum.
 int const INCREASE_FACTOR = 2; // Factor by which queue length increases.
 int const INPUT_ERROR = 1; // Input error code, if the cmd input is incorrect.
 int const SUCCESSFUL_EXECUTION = 0; // Returned with successful execution
