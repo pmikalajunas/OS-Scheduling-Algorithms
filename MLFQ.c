@@ -1,19 +1,37 @@
 // Multi level feedback queue
-
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <math.h>
+#include <ctype.h>
 #include "./LinkedList.h"
 #include "./SchedulerHelper.h"
 
-void main(int argc, char **argv) {
-    // Priority queue, RR.
-    LinkedList *RRQueue, *FCFSQueue, *rrCompletedQueue, *fcfsCompletedQueue waitingQueue;
-    
+
+// timeElapsed is a simulation of CPU cycles, every iteration is one CPU clock cycle
+// 1 CPU Clock Cycle = 1ms
+ int timeElapsed = 0;
+// Defines how much time we spent executing the current process.
+int timeSpentOnIteration = 0;
+
+LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, LinkedList *completedQueue);
+LinkedList* firstComeFirstServe(LinkedList *processQueue, LinkedList *waitingQueue, LinkedList *completedQueue);
+LinkedList *FCFSQueue, *RRQueue, *FCFSCompletedQueue, *RRCompletedQueue, *waitingQueue, *completedQueue;
+
+int main() {
     RRQueue = initialise_linked_list();
     FCFSQueue = initialise_linked_list();
-    completedQueue = initialise_linked_list();
     waitingQueue = initialise_linked_list();
-
     
+    // A list of processes which have finished executing.
+    completedQueue = initialise_linked_list();
+
+    int argc = 5;
+    char *argv[] = {"MLFQ", "5", "0", "6", "0"};
+    
+
+
     if(isEvenNumberOfArguments(argc)) {
         printGuidelines();
         return 1;
@@ -22,77 +40,100 @@ void main(int argc, char **argv) {
     // Ensure all inputs are integers
     if(!verifyAllInputsInt(argc,  argv)) return 1;
 
+   
+
     // Process goes to RR queue
 
-    // if burst time > time quantum then burst time - time quantum goes to FCFS queue.
+    for(int i = 1; i < argc; i += 2) {
+        char *ptr;
+        int burstTime = (int) strtol(argv[i], &ptr, 10);
+        int arrivalTime = (int) strtol(argv[i + 1], &ptr, 10);
+
+        if(arrivalTime == 0) {
+            append_linked_list(RRQueue, newProcess(burstTime, arrivalTime));
+        } else {
+            append_linked_list(waitingQueue, newProcess(burstTime, arrivalTime));
+        }
+
+    }
+
+  //  if burst time > time quantum then burst time - time quantum goes to FCFS queue.
 
 
-    rrCompletedQueue = roundRobin(RRQueue, waitingQueue, FCFSQueue);
-    fcfsCompletedQueue = firstComeFirstServed(FCFSQueue);
+    roundRobin(RRQueue, waitingQueue, completedQueue);
+    firstComeFirstServe(FCFSQueue, waitingQueue, completedQueue);
     
-    merge_linked_lists(rrCompletedQueue, fcfsCompletedQueue);
-
-    printProcessTable(rrCompletedQueue);
     
+    printProcessTable(completedQueue);
+
 }
 
 
 
-// TODO: we might simulate actual CPU clock ticks
-LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, LinkedList *FCFSQueue) {
 
-    int timeElapsed = 0;
-    int count = 0;
 
-    // A list of processes which have finished executing.
-    LinkedList *completedQueue = initialise_linked_list();
+/**
+ * RoundRobin scheduling algorithm implementation.
+ * Returns a queue of completed processes, in their order of completion.
+ * Simulates CPU clock cycle, assumes that one CPU clock cycle is one milisecond.
+ * Each iteration of the loop is one clock cycle.
+ * Takes list of of processes in processQueue, without the arrival time.
+ * Takes a list of processes in waitingQueue, with arrival time.
+ * */
+LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, LinkedList *completedQueue) {
 
-    // While process queue is not empty.
-    while(!linked_list_empty(processQueue)) {
+    // We have to keep the algorithm until we have processes left in either process or waiting queue.
+    while(!linked_list_empty(processQueue) || !linked_list_empty(waitingQueue)) {
+
+        // Adding node from waiting queue, before taking one from processQueue.
+        addWaitingNode(waitingQueue, processQueue, timeElapsed);
 
         // Getting the head node of the queue.
         Node *node = remove_head_linked_list(processQueue);
 
-        printf("\nIteration: (%d) timeElapsed: (%d)", count++, timeElapsed);
-        printf("\n____________________________________________________________________________\n");
-        printf("\nProcess (ID: %d) is being processed\n", node->process->pId);
+        // If processing queue is empty, we keep on going with another CPU cycle.
+        if(!node) {           
+            printEmptyQueueError(timeElapsed++);
+            continue;
+        }
 
-        // Subtracting TIME_QUANTUM from burst time gives us process' remaining time.
-        int burstTimeTemp = node->process->burstTime;
-        burstTimeTemp -= TIME_QUANTUM;
+        printProcessingHeader(timeElapsed, node);
 
-        // Waiting time is equal to overall time elapsed minus the time current process spent executing and its arrival time.
-        node->process->waitingTime = timeElapsed - node->process->timeSpentProcessing - node->process->arrivalTime;
+        // Retrieving remaining time considering the current iteration.
+        int remainingTime = node->process->remainingTime - timeSpentOnIteration;
 
-        // Negative burst time means process finished executing early or exactly on time.
-        // Positive burst time means that the process is not finished.
-        if(burstTimeTemp > 0) {
-            timeElapsed += TIME_QUANTUM;
+        // We keep running through CPU cycles while process is being processed.
+        // We check if there are nodes in the waiting queue and we make sure TIME_QUANTUM is not exeeded.
+        while(remainingTime && (TIME_QUANTUM > timeSpentOnIteration)) {
+            timeSpentOnIteration++;
+            timeElapsed++;
+            remainingTime = node->process->remainingTime - timeSpentOnIteration;
+            printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
+             timeElapsed, timeSpentOnIteration, remainingTime);
 
-            // Add the node from the waiting queue (if it's ready).
             addWaitingNode(waitingQueue, processQueue, timeElapsed);
+        }
+        printf("\n____________________________________________________________________________\n"); 
+            
 
-            // Update process burst time by subtracting the time it has been executing.
-            node->process->burstTime -= TIME_QUANTUM;
+        node->process->timeSpentProcessing += timeSpentOnIteration;
 
-            printf("Process (ID: %d) left CPU (is not finished), timeElapsed: (%d)\n",
-                    node->process->pId, timeElapsed);           
-            printProcessInfo(node->process);
+        // Updating process' remaining time by subtracrting the time it spent executing.
+        // (Initially remaining time is set to be equal to burst time.)
+        node->process->remainingTime -= timeSpentOnIteration;
 
-             // Process is put at the end of the processing queue.
+        // If process is not done yet add it back to the processing queue.
+        if(node->process->remainingTime > 0) {
             append_linked_list(FCFSQueue, node->process);
+            printf("Process (ID: %d) appended back to the queue.\n", node->process->pId);
+            printProcessInfo(node->process);
         } else {
-            int executionTime = abs(TIME_QUANTUM + burstTimeTemp);
-            timeElapsed += executionTime;
-
-            // Add the node from the waiting queue (if it's ready).
-            addWaitingNode(waitingQueue, processQueue, timeElapsed);
-
             discardProcess(node, timeElapsed, completedQueue);
         }
 
-
-        printf("\n____________________________________________________________________________\n");
+        // Resetting time spent on iteration, next process will take turn.
+        timeSpentOnIteration = 0;
+ 
     }
     return completedQueue;
 }
@@ -100,48 +141,54 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, Linke
 
 
 
-LinkedList* firstComeFirstServe(LinkedList *FCFSQueue){
+LinkedList* firstComeFirstServe(LinkedList *processQueue, LinkedList *waitingQueue, LinkedList *completedQueue){
 
-    int timeElapsed = 0;
-    int count = 0;
+    while(!linked_list_empty(processQueue) || !linked_list_empty(waitingQueue)){
 
-    // A list of processes which have finished executing.
-    LinkedList *completedQueue = initialise_linked_list();
-
-    while(!linked_list_empty(processQueue) && !linked_list_empty()){
+        // Adding node from waiting queue, before taking one from processQueue.
+        addWaitingNode(waitingQueue, processQueue, timeElapsed);
 
         // Getting the head node of the queue.
         Node *node = remove_head_linked_list(processQueue);
 
-        printf("\nIteration: (%d) timeElapsed: (%d)", count++, timeElapsed);
-        printf("\n____________________________________________________________________________\n");
-        printf("\nProcess (ID: %d) is being processed\n", node->process->pId);
-        
+        // If processing queue is empty, we keep on going with another CPU cycle.
+        if(!node) {           
+            printEmptyQueueError(timeElapsed++);
+            continue;
+        }
 
-        // Calculating waiting time and the total time elapsed.
-   //  node->process->waitingTime = timeElapsed - node->process->arrivalTime;
-        timeElapsed += node->process->burstTime;
+        printProcessingHeader(timeElapsed, node);
 
-        // Add the node from the waiting queue (if it's ready).
-        addWaitingNode(waitingQueue, processQueue, timeElapsed);
+
+        // Retrieving remaining time considering the current iteration.
+        int remainingTime = node->process->remainingTime - timeSpentOnIteration;
+
+        // We keep running through CPU cycles while process is being processed.
+        // We check if there are nodes in the waiting queue.
+        while(remainingTime) {
+            timeSpentOnIteration++;
+            timeElapsed++;
+            remainingTime = node->process->remainingTime - timeSpentOnIteration;
+            printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
+             timeElapsed, timeSpentOnIteration, remainingTime);
+
+            addWaitingNode(waitingQueue, processQueue, timeElapsed);
+        }
+        printf("\n____________________________________________________________________________\n"); 
+
+
+ 
 
         node->process->timeSpentProcessing = node->process->burstTime;
+        discardProcess(node, timeElapsed, completedQueue);
+        // Resetting time spent on iteration, next process will take turn.
+        timeSpentOnIteration = 0;
 
-        node->process->completionTime = timeElapsed;
-        node->process->turnAroundTime = node->process->completionTime - node->process->arrivalTime;
-        // waiting  + burst
-        node->process->waitingTime = timeElapsed - node->process->burstTime;
-      // completeion  - arrival 
-        printf("Process (ID: %d) has finished, timeElapsed: (%d)\n",
-              node->process->pId, timeElapsed);
-        printProcessInfo(node->process);
-
-        append_linked_list(completedQueue, node->process);
-
-        free(node);
-
-        printf("\n____________________________________________________________________________\n");
     }
 
     return completedQueue;
 }
+
+
+
+
