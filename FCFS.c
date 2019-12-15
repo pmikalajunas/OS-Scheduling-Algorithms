@@ -4,5 +4,5 @@
 
 int main(int argc, char **argv){
 
-    return executeSchedulingAlgorithm(firstComeFirstServe, argc, argv);
+    return executeSchedulingAlgorithm(firstComeFirstServed, argc, argv);
 }

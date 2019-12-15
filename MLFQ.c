@@ -35,6 +35,9 @@ int main(int argc, char *argv[]) {
 
     }
 
+    // Sort the list of processes by their arrival time.
+    // Allows us to just check the head each time.
+    bubbleSort(waitingQueue->head);
 
     completedQueueRR = roundRobin(RRQueue, waitingQueue, FCFSQueue);
     printf("\n_________________________________________________________\n");

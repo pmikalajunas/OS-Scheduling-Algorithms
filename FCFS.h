@@ -7,7 +7,7 @@
 
 
 
-LinkedList* firstComeFirstServe(LinkedList *processQueue, LinkedList *waitingQueue){
+LinkedList* firstComeFirstServed(LinkedList *processQueue, LinkedList *waitingQueue, LinkedList *NOTUSED){
 
 
     // Defines how much time we spent executing the current process.
