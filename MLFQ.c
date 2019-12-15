@@ -2,8 +2,6 @@
 #include "./RR.h"
 #include "./FCFS.h"
 
-
-
 int main(int argc, char *argv[]) {
 
     if(validateInput(argc, argv) == INPUT_ERROR) {
