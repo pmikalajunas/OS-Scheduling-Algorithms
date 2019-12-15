@@ -71,32 +71,5 @@ LinkedList* firstComeFirstServe(LinkedList *processQueue, LinkedList *waitingQue
 
 int main(int argc, char **argv){
 
-    // Process queue will store all the processes without arrival time.
-    LinkedList *processQueue = initialise_linked_list();
-    // Waiting queue will store all the processes with arrival time.
-    LinkedList *waitingQueue = initialise_linked_list();
-
-    if(isEvenNumberOfArguments(argc)) {
-        printGuidelines();
-        return 1;
-    }
-
-    // Ensure all inputs are integers
-    if(!verifyAllInputsInt(argc,  argv)) return 1;
-
-    // Processes with arrival time goes to waiting queue, ones without to the processing queue.
-    readCommandLineArguments(argc, argv, processQueue, waitingQueue);
-
-    // Sort the list of processes by their arrival time.
-    // Allows us to just check the head each time.
-    bubbleSort(waitingQueue->head);
-
-    LinkedList *completedQueue = firstComeFirstServe(processQueue, waitingQueue);
-
-    printProcessTable(completedQueue);
-
-    // Free the allocated memory for both queues.
-    free_linked_list(processQueue);
-    free_linked_list(waitingQueue);
-    free_linked_list(completedQueue);
+    return executeSchedulingAlgorithm(firstComeFirstServe, argc, argv);
 }
