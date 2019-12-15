@@ -5,7 +5,7 @@ int processCount = 0; // Incremented with each input.
 
 
 // -------------------- CONSTANTS --------------------
-int const TIME_QUANTUM = 3; // Fixed time quantum.
+int const TIME_QUANTUM = 100; // Fixed time quantum.
 int const INCREASE_FACTOR = 2; // Factor by which queue length increases.
 // ---------------------------------------------------
 
@@ -144,4 +144,15 @@ void printProcessingHeader(int timeElapsed, Node *node) {
     printf("\ntimeElapsed: (%d)", timeElapsed);
     printf("\n____________________________________________________________________________\n");
     printf("\nProcess (ID: %d) is being processed\n", node->process->pId);
+}
+
+
+/**
+ * Informs about the empty processing queue, prints out the elapsed time.
+ * */
+void printEmptyQueueError(int timeElapsed) {
+    printf("\n__________________________________________________________\n");
+    printf("Processing queue is empty, proceeding with another cycle.\n");
+    printf("timeElapsed: (%d)\n", timeElapsed);
+    printf("\n__________________________________________________________\n");
 }
