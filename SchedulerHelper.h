@@ -20,7 +20,7 @@ int timeElapsed = 0;
 
 
 // -------------------- CONSTANTS --------------------
-int const TIME_QUANTUM = 10; // Fixed time quantum.
+int const TIME_QUANTUM = 3; // Fixed time quantum.
 int const INCREASE_FACTOR = 2; // Factor by which queue length increases.
 int const INPUT_ERROR = 1; // Input error code, if the cmd input is incorrect.
 int const SUCCESSFUL_EXECUTION = 0; // Returned with successful execution
@@ -31,16 +31,16 @@ void printAddedNodeInfo(Node *addedNode);
 void printProcessInfo(Process *process);
 void printGuidelines();
 void printProcessTable(LinkedList *completedQueue);
-void printProcessingHeader(int timeElapsed, Node *node);
-void printEmptyQueueError(int timeElapsed);
+void printProcessingHeader(Node *node);
+void printEmptyQueueError();
 void printComparisonData(LinkedList *completedQueue);
 
 Process *newProcess(int burstTime, int arrivalTime);
 bool isInt(char* input);
 bool verifyAllInputsInt(int argc,  char **argv);
 void readCommandLineArguments(int argc, char *argv[], LinkedList *processQueue, LinkedList *waitingQueue);
-void discardProcess(Node *node, int timeElapsed, LinkedList *completedQueue);
-void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue, int timeElapsed);
+void discardProcess(Node *node, LinkedList *completedQueue);
+void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue);
 bool isEvenNumberOfArguments(int argc);
 int executeSchedulingAlgorithm(LinkedList* (*f)(LinkedList*, LinkedList*, LinkedList*),
                                 int argc, char *argv[]);
@@ -128,7 +128,7 @@ void readCommandLineArguments(int argc, char *argv[], LinkedList *processQueue, 
 Discards process by assigning completion time and turn around time.
 Prints process info and adds process into the queue of completed processes.
 */
-void discardProcess(Node *node, int timeElapsed, LinkedList *completedQueue) {
+void discardProcess(Node *node, LinkedList *completedQueue) {
   
     // We don't want to leave remaining time being negative.
     node->process->remainingTime = 0;
@@ -145,7 +145,7 @@ void discardProcess(Node *node, int timeElapsed, LinkedList *completedQueue) {
 
 // Checks if the current process is ready to be discarded from waiting queue.
 // If arrival time meets the current time, process gets removed and added to the processing queue.
-void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue, int timeElapsed) {
+void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue) {
 
     Node *candidateNode = peek_head_linked_list(waitingQueue);
 
@@ -350,7 +350,7 @@ void printProcessTable(LinkedList *completedQueue) {
  * Prints process ID and time elapsed.
  * Used in both RR and FCFS to print information on each iteration.
  * */
-void printProcessingHeader(int timeElapsed, Node *node) {
+void printProcessingHeader(Node *node) {
     printf("\ntimeElapsed: (%d)", timeElapsed);
     printf("\n____________________________________________________________________________\n");
     printf("\nProcess (ID: %d) is being processed\n", node->process->pId);
@@ -360,7 +360,7 @@ void printProcessingHeader(int timeElapsed, Node *node) {
 /**
  * Informs about the empty processing queue, prints out the elapsed time.
  * */
-void printEmptyQueueError(int timeElapsed) {
+void printEmptyQueueError() {
     printf("\n__________________________________________________________\n");
     printf("Processing queue is empty, proceeding with another cycle.\n");
     printf("timeElapsed: (%d)\n", timeElapsed);

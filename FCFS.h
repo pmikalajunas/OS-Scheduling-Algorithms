@@ -19,18 +19,18 @@ LinkedList* firstComeFirstServed(LinkedList *processQueue, LinkedList *waitingQu
     while(!linked_list_empty(processQueue) || !linked_list_empty(waitingQueue)){
 
         // Adding node from waiting queue, before taking one from processQueue.
-        addWaitingNode(waitingQueue, processQueue, timeElapsed);
+        addWaitingNode(waitingQueue, processQueue);
 
         // Getting the head node of the queue.
         Node *node = remove_head_linked_list(processQueue);
 
         // If processing queue is empty, we keep on going with another CPU cycle.
         if(!node) {           
-            printEmptyQueueError(timeElapsed++);
+            printEmptyQueueError();
             continue;
         }
 
-        printProcessingHeader(timeElapsed, node);
+        printProcessingHeader(node);
 
 
         // Retrieving remaining time considering the current iteration.
@@ -45,7 +45,7 @@ LinkedList* firstComeFirstServed(LinkedList *processQueue, LinkedList *waitingQu
             printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
              timeElapsed, timeSpentOnIteration, remainingTime);
 
-            addWaitingNode(waitingQueue, processQueue, timeElapsed);
+            addWaitingNode(waitingQueue, processQueue);
         }
         printf("\n____________________________________________________________________________\n"); 
 
@@ -53,7 +53,7 @@ LinkedList* firstComeFirstServed(LinkedList *processQueue, LinkedList *waitingQu
  
 
         node->process->timeSpentProcessing = node->process->burstTime;
-        discardProcess(node, timeElapsed, completedQueue);
+        discardProcess(node, completedQueue);
         // Resetting time spent on iteration, next process will take turn.
         timeSpentOnIteration = 0;
 
