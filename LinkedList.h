@@ -111,24 +111,27 @@ Node *append_linked_list(LinkedList *list, Process *process)
     return newNode;
 }
 
-// TODO: restructure the method, make sure there are no bugs
+
 LinkedList *merge_linked_lists(LinkedList *first_list, LinkedList *second_list) {
 
-    // Make sure lists are not empty.
+    // If the first list is empty, simply return the second list.
     if(!first_list || !first_list->head){
-        printf("1st list was empty!!");
+        printf("(merge_linked_lists) First list was empty!");
         free(first_list);
         return second_list;
     }
 
+    // If the second is empty, simply return the first list.
     if(!second_list || !second_list->head){
-        printf("2nd list was empty!!");
+        printf("(merge_linked_lists) Second list was empty!");
         free(second_list);
         return first_list;
     }
 
-    first_list->tail->next = second_list->head;
-    first_list->tail = second_list->tail;
+    while(second_list->head){
+        append_linked_list(first_list, second_list->head->process); 
+        second_list->head = second_list->head->next;
+    }
 
     free(second_list);
     return first_list;
