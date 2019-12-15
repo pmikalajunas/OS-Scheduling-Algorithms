@@ -15,9 +15,7 @@
  * */
 LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, LinkedList *appendingQueue) {
 
-    // timeElapsed is a simulation of CPU cycles, every iteration is one CPU clock cycle
-    // 1 CPU Clock Cycle = 1ms
-    int timeElapsed = 0;
+
     // Defines how much time we spent executing the current process.
     int timeSpentOnIteration = 0;
 

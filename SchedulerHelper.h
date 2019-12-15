@@ -12,6 +12,10 @@
 // -------------------- VARIABLES --------------------
 int queueLength = 64; // May be resized, if exceded.
 int processCount = 0; // Incremented with each input.
+
+// timeElapsed is a simulation of CPU cycles, every iteration is one CPU clock cycle
+// 1 CPU Clock Cycle = 1ms
+int timeElapsed = 0; 
 // ---------------------------------------------------
 
 
@@ -117,6 +121,8 @@ void readCommandLineArguments(int argc, char *argv[], LinkedList *processQueue, 
     }
 }
 
+
+
 /*
 Discards process by assigning completion time and turn around time.
 Prints process info and adds process into the queue of completed processes.
@@ -165,6 +171,24 @@ void putProcessBack(LinkedList *processQueue, Node *node) {
 
 
 /**
+ * Validates input by checking if we have right amount of arguments.
+ * Checks if every character is an integer.
+ * Returns INPUT_ERROR if input is user input is not suitable.
+ * Returns 0 if input is correct.
+ * */
+int validateInput(int argc, char *argv[]) {
+    if(isEvenNumberOfArguments(argc)) {
+        printGuidelines();
+        return INPUT_ERROR;
+    }
+
+    if(!verifyAllInputsInt(argc,  argv)) return INPUT_ERROR;
+
+    return 0;
+}
+
+
+/**
  * Executes passed scheduling algorithm function with given CMD arguments (argv).
  * Prints the table of executed processes in their order of completion.
  * (argc, argv) are the command line arguments.
@@ -174,18 +198,15 @@ int executeSchedulingAlgorithm(LinkedList* (*f)(LinkedList*, LinkedList*, Linked
                                 int argc, char *argv[]) 
 {
 
-    if(isEvenNumberOfArguments(argc)) {
-        printGuidelines();
+    if(validateInput(argc, argv) == INPUT_ERROR) {
         return INPUT_ERROR;
     }
+
 
     // Process queue will store all the processes without arrival time.
     LinkedList *processQueue = initialise_linked_list();
     // Waiting queue will store all the processes with arrival time.
     LinkedList *waitingQueue = initialise_linked_list();
-
-    // Ensure all inputs are integers
-    if(!verifyAllInputsInt(argc,  argv)) return INPUT_ERROR;
 
     // Processes with arrival time goes to waiting queue, ones without to the processing queue.
     readCommandLineArguments(argc, argv, processQueue, waitingQueue);

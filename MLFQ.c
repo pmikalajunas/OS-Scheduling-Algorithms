@@ -3,37 +3,21 @@
 #include "./FCFS.h"
 
 
-// timeElapsed is a simulation of CPU cycles, every iteration is one CPU clock cycle
-// 1 CPU Clock Cycle = 1ms
- int timeElapsed = 0;
-// Defines how much time we spent executing the current process.
-int timeSpentOnIteration = 0;
 
+int main(int argc, char *argv[]) {
 
-int main() {
+    if(validateInput(argc, argv) == INPUT_ERROR) {
+        return INPUT_ERROR;
+    }
+
 
     LinkedList *RRQueue = initialise_linked_list();
     LinkedList *FCFSQueue = initialise_linked_list();
     LinkedList *waitingQueue = initialise_linked_list();
     
     // A list of processes which have finished executing.
-    LinkedList *completedQueue = initialise_linked_list();
-    LinkedList *completedQueue2 = initialise_linked_list();
-
-
-    int argc = 5;
-    char *argv[] = {"MLFQ", "5", "0", "6", "0"};
-    
-
-
-    if(isEvenNumberOfArguments(argc)) {
-        printGuidelines();
-        return 1;
-    }
-    
-    // Ensure all inputs are integers
-    if(!verifyAllInputsInt(argc,  argv)) return 1;
-
+    LinkedList *completedQueueRR = initialise_linked_list();
+    LinkedList *completedQueueFCFS = initialise_linked_list();
    
 
     // Process goes to RR queue
@@ -52,16 +36,18 @@ int main() {
     }
 
 
-    completedQueue = roundRobin(RRQueue, waitingQueue, FCFSQueue);
+    completedQueueRR = roundRobin(RRQueue, waitingQueue, FCFSQueue);
     printf("\n_________________________________________________________\n");
     printf("Round Robin finished executing\n");
     printf("\n_________________________________________________________\n");
-    completedQueue2 = firstComeFirstServe(FCFSQueue, waitingQueue);
+    completedQueueFCFS = firstComeFirstServe(FCFSQueue, waitingQueue);
     
     
-    completedQueue = merge_linked_lists(completedQueue, completedQueue2);
+    LinkedList *completedQueue = merge_linked_lists(completedQueueRR, completedQueueFCFS);
 
     printProcessTable(completedQueue);
+
+    free_linked_list(completedQueue);
 
 }
 
