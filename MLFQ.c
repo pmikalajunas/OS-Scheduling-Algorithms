@@ -26,7 +26,6 @@ int main(int argc, char *argv[]) {
    
 
     // Process goes to RR queue
-
     for(int i = 1; i < argc; i += 2) {
         char *ptr;
         int burstTime = (int) strtol(argv[i], &ptr, 10);

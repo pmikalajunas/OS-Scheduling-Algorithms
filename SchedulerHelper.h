@@ -5,10 +5,6 @@
 #include <math.h>
 #include <ctype.h>
 
-#include "./Debug.h"
-#include "./Structures.h"
-#include "./LinkedList.h"
-#include "./BubbleSort.h"
 
 // -------------------- VARIABLES --------------------
 int queueLength = 64; // May be resized, if exceded.
@@ -17,37 +13,22 @@ int processCount = 0; // Incremented with each input.
 // timeElapsed is a simulation of CPU cycles, every iteration is one CPU clock cycle
 // 1 CPU Clock Cycle = 1ms
 int timeElapsed = 0; 
-// ---------------------------------------------------
 
 
-// -------------------- CONSTANTS --------------------
-int const TIME_QUANTUM = 10; // Fixed time quantum.
-int const INCREASE_FACTOR = 2; // Factor by which queue length increases.
-int const INPUT_ERROR = 1; // Input error code, if the cmd input is incorrect.
-int const SUCCESSFUL_EXECUTION = 0; // Returned with successful execution
+// -------------------- HEADER FILES --------------------
+#include "./Debug.h"
+#include "./Constants.h"
+#include "./Structures.h"
+#include "./LinkedList.h"
+#include "./BubbleSort.h"
+#include "./PrintHelper.h"
+#include "./InputHelper.h"
 
-// -------------------- CONSTRAINTS --------------------
-int const MAX_ARRIVAL_TIME = 2000;
-int const MAX_BURST_TIME = 2000;
-int const PROCESS_LIMIT = 100; 
 
 // -------------- FUNCTION DEFINITIONS --------------- 
-void printAddedNodeInfo(Node *addedNode);
-void printProcessInfo(Process *process);
-void printGuidelines();
-void printProcessTable(LinkedList *completedQueue);
-void printProcessingHeader(Node *node);
-void printEmptyQueueError();
-void printComparisonData(LinkedList *completedQueue);
-void printConstraintInfo();
 
-Process *newProcess(int burstTime, int arrivalTime);
-bool isInt(char* input);
-bool verifyAllInputsInt(int argc,  char **argv);
-void readCommandLineArguments(int argc, char *argv[], LinkedList *processQueue, LinkedList *waitingQueue);
 void discardProcess(Node *node, LinkedList *completedQueue);
 void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue);
-bool isEvenNumberOfArguments(int argc);
 int executeSchedulingAlgorithm(LinkedList* (*f)(LinkedList*, LinkedList*, LinkedList*),
                                 int argc, char *argv[]);
 void putProcessBack(LinkedList *processQueue, Node *node);                                
@@ -57,86 +38,6 @@ void putProcessBack(LinkedList *processQueue, Node *node);
 //                          FUNCTIONS
 //
 /////////////////////////////////////////////////////////////////////////////
-
-
-// Allocate memory to new process and initialise it.
-Process *newProcess(int burstTime, int arrivalTime) {
-
-    // Allocating memory for a process, if available.
-    Process *p = (Process *) malloc(sizeof(Process));
-    if(p == NULL) {
-        return NULL;
-    }
-
-    // Set the burst time, pId and return the value.
-    p->pId = processCount++;
-    p->burstTime = burstTime;
-    p->arrivalTime = arrivalTime;
-    p->remainingTime = burstTime;
-    p->completionTime = 0;
-    p->turnAroundTime = 0;
-    p->waitingTime = 0;
-    p->timeSpentProcessing = 0;
-
-    return p;
-}
-
-
-// Check if input string contains all integers.
-// Return true if all digits, false if not.
-bool isInt(char* input) {
-  for(int i = 0; i < strlen(input); i++) {
-    if(!isdigit(input[i])) {
-      return false;
-    }
-  }
-  return true;
-}
-
-
-// Ensure all inputs to the program are integers.
-// Checks if burst time is more or equal to 1.
-// Checks if both burst time and arrival time meets the constraints.
-bool verifyAllInputsInt(int argc,  char **argv) {
-
-    for(int i = 1; i < argc; i++) {
-      if(!isInt(argv[i])) {
-        printf("(ERROR) All inputs has to be positive integers!\n");
-        return false;
-      }
-      int x = atoi(argv[i]);
-      if((i % 2 != 0) && (x < 1 || x > MAX_BURST_TIME)) {
-          printf("(ERROR) Burst has to be a number between 1 and %d!\n", MAX_BURST_TIME);
-          return false;
-      } else if (x < 0 || x > MAX_ARRIVAL_TIME) {
-          printf("(ERROR) Arrival time has to be a number between 0 and %d!\n", MAX_ARRIVAL_TIME);
-          return false;
-      }
-    }
-    return true;
-
-}
-
-/**
- * Reads a list of processes with their burst and arrival times from CMD.
- * In the format: (Burst time 1) (Arrival time 1) (Burst time 2) (Arrival time 2) ...
- * Process with arrival time are added to the waiting queue, without - to the processQueue.
- * */
-void readCommandLineArguments(int argc, char *argv[], LinkedList *processQueue, LinkedList *waitingQueue) {
-
-    for(int i = 1; i < argc; i += 2) {
-        char *ptr;
-        int burstTime = (int) strtol(argv[i], &ptr, 10);
-        int arrivalTime = (int) strtol(argv[i + 1], &ptr, 10);
-
-        if(arrivalTime == 0) {
-            append_linked_list(processQueue, newProcess(burstTime, arrivalTime));
-        } else {
-            append_linked_list(waitingQueue, newProcess(burstTime, arrivalTime));
-        }
-    }
-}
-
 
 
 /*
@@ -190,46 +91,6 @@ void putProcessBack(LinkedList *processQueue, Node *node) {
     printProcessInfo(node->process);
 }
 
-/** 
- * Checks if user passed a right amount of processes.
- * @return Returns False if it doens't.
- * Returns True if it does.
- * */
-bool isCorrectNumberOfProcesses(int argc) {
-    return (((argc - 1) / 2) <= PROCESS_LIMIT);
-}
-
-/**
- * Validates input by checking if we have right amount of arguments.
- * Checks if every character is an integer.
- * Checks if there is any input at all!
- * Checks if input meets our set constraints.
- * Returns INPUT_ERROR if input is user input is not suitable.
- * Returns 0 if input is correct.
- * */
-int validateInput(int argc, char *argv[]) {
-
-    // No arguments.
-    if(argc <= 1) {
-        printGuidelines();
-        return INPUT_ERROR;
-    }
-
-    if(!isCorrectNumberOfProcesses(argc)) {
-        printConstraintInfo();
-        return INPUT_ERROR;
-    }
-
-
-    if(isEvenNumberOfArguments(argc)) {
-        printGuidelines();
-        return INPUT_ERROR;
-    }
-    if(!verifyAllInputsInt(argc,  argv)) return INPUT_ERROR;
-
-    return SUCCESSFUL_EXECUTION;
-}
-
 
 /**
  * Executes passed scheduling algorithm function with given CMD arguments (argv).
@@ -273,187 +134,4 @@ int executeSchedulingAlgorithm(LinkedList* (*f)(LinkedList*, LinkedList*, Linked
 }
 
 
-/**
- * Tells if user passed an equal number of arguments.
- * It's important because we have to have arrival ...
- * ... and burst time for every process.
- * */
-bool isEvenNumberOfArguments(int argc) {
-    return (argc - 1) % 2 != 0;
-}
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//                          PRINTING FUNCTIONS
-//
-/////////////////////////////////////////////////////////////////////////////
-
-
-void printComparisonData(LinkedList *completedQueue) {
-    ComparisonData data;
-    Node *curProcess = peek_head_linked_list(completedQueue);
-    float totalNodes = 0,
-          totalTurnaroundTime = 0,
-          totalWaitingTime = 0,
-          totalCompletionTime = 0,
-          totalBurstTime = 0,
-          totalArrivalTime = 0,
-          totalResponseTime;
-
-    do {
-        totalNodes++;
-        totalTurnaroundTime += curProcess->process->turnAroundTime;
-        totalWaitingTime += curProcess->process->waitingTime;
-        totalCompletionTime += curProcess->process->completionTime;
-        totalBurstTime += curProcess->process->burstTime;
-        totalArrivalTime += curProcess->process->arrivalTime;
-        totalResponseTime += curProcess->process->responseTime;
-        
-    } while((curProcess = curProcess->next));
-
-    data.averageTurnaroundTime = totalTurnaroundTime / totalNodes;
-    data.averageWaitingTime = totalWaitingTime / totalNodes;
-    data.averageCompletionTime = totalCompletionTime / totalNodes;
-    data.averageBurstTime = totalBurstTime / totalNodes;
-    data.averageArrivalTime = totalArrivalTime / totalNodes;
-    data.averageResponseTime = totalResponseTime / totalNodes;
-    data.throughput = totalNodes / timeElapsed;
-
-    printf("\n+-------------------------------------------------------------------------------------+\n");
-    printf("|                                  Statistics                                         |\n");
-    printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
-    printf(" Time Elapsed = ( %d )\n", timeElapsed);
-    printf(" Average Turnaround Time = ( %f )\n", data.averageTurnaroundTime);
-    printf(" Average Waiting Time = ( %f )\n", data.averageWaitingTime);
-    printf(" Average Completion Time = ( %f )\n", data.averageCompletionTime);
-    printf(" Average Burst Time = ( %f )\n", data.averageBurstTime);
-    printf(" Average Arrival Time = ( %f )\n", data.averageArrivalTime);
-    printf(" Average Response Time = ( %f )\n" , data.averageResponseTime);
-    printf(" Throughput = ( %f )\n", data.throughput);
-    printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
-
-}
-
-/**
- * Prints information about the constraints that we have set.
- * */
-void printConstraintInfo() {
-        printf("____________________________________________________________________________\n");
-    printf("(ERROR) Invalid parameters.\n");
-    printf("Burst time should be a number between 1 and %d\n", MAX_BURST_TIME);
-    printf("Arrival time should be a number between 0 and %d\n", MAX_ARRIVAL_TIME);
-    printf("You should not be able to enter more than %d processes!\n", PROCESS_LIMIT);
-    printf("____________________________________________________________________________\n");
-}
-
-
-/**
- * Prints information about the node which was added from the waiting queue.
- * */
-void printAddedNodeInfo(Node *addedNode) {
-    if(!DEBUG) return;
-    printf("\n+++++++++++++++++++++++++++++++++++++++++++++++\n");
-    printf("\nNode (ID: %d) is added from the waiting queue\n",
-            addedNode->process->pId);   
-    printf("Time elapsed: %d\n", addedNode->process->arrivalTime);
-    printf("\n+++++++++++++++++++++++++++++++++++++++++++++++\n");
-}
-
-/**
- *  Prints all the information about the process once it finishes executing.
- * */
-void printProcessInfo(Process *process) {
-    if(!DEBUG) return;
-    printf("    - Completion time: (%d)\n", process->completionTime);
-    printf("    - Turn-around time: (%d)\n", process->turnAroundTime);
-    printf("    - Waiting time: (%d)\n", process->waitingTime);
-    printf("    - Burst time: (%d)\n", process->burstTime);
-    printf("    - Arrival time: (%d)\n", process->arrivalTime);
-    printf("    - Time Spent Processing: (%d)\n", process->timeSpentProcessing);
-    printf("    - Remaining burst time: (%d)\n", process->remainingTime);
-}
-
-
-/**
- * Prints information on how to use the program, if user uses wrong CMD arguments. 
- * */
-void printGuidelines() {
-    printf("____________________________________________________________________________\n");
-    printf("(ERROR) Invalid parameters.\n");
-    printf("Should be in the format of { (Burst time 1) (Arrival time 1) (Burst time 2) (Arrival time 2) ... }\n");
-    printf("For example: RR 54 32 2 32 12 2\n");
-    printf("Or FCFS 54 32 2 32 12 2\n");
-    printf("____________________________________________________________________________\n");
-}
-
-
-/**
- * Prints detailed about every process that has been executed.
- * Processes are ordered the way they have been terminated.
- * */
-void printProcessTable(LinkedList *completedQueue) {
-
-    printf("\n+-------------------------------------------------------------------------------------+\n");
-    printf("|                                  Executed Processes                                 |\n");
-    printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
-    printf("|  ID | Completion Time | Waiting Time | Turn-Around Time | Burst Time | Arrival Time |\n");
-
-    // The following line will be used to separate processes from each other.
-    char line[] = "+-----+-----------------+--------------+------------------+------------+--------------+\n";
-    printf("%s", line);
-
-    Node *node = peek_head_linked_list(completedQueue);
-
-    do {
-        printf("|%5d|%17d|%14d|%18d|%12d|%14d|\n",
-                node->process->pId, node->process->completionTime,
-                node->process->waitingTime, node->process->turnAroundTime,
-                node->process->burstTime, node->process->arrivalTime);
-        printf("%s", line);
-    } while((node = node->next)); 
-
-}
-
-
-/**
- * Prints process ID and time elapsed.
- * Used in both RR and FCFS to print information on each iteration.
- * */
-void printProcessingHeader(Node *node) {
-    if(!DEBUG) return;
-    printf("\ntimeElapsed: (%d)", timeElapsed);
-    printf("\n____________________________________________________________________________\n");
-    printf("\nProcess (ID: %d) is being processed\n", node->process->pId);
-}
-
-
-/**
- * Informs about the empty processing queue, prints out the elapsed time.
- * */
-void printEmptyQueueError() {
-    if(!DEBUG) return;
-    printf("\n__________________________________________________________\n");
-    printf("Processing queue is empty, proceeding with another cycle.\n");
-    printf("timeElapsed: (%d)\n", timeElapsed);
-    printf("\n__________________________________________________________\n");
-}
-
-
-void printTimeInfo(int timeElapsed, int timeSpentOnIteration, int remainingTime) {
-    if(!DEBUG) return;
-    printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
-            timeElapsed, timeSpentOnIteration, remainingTime);
-}
-
-void printLine() {
-    if(!DEBUG) return;
-    printf("\n____________________________________________________________________________\n"); 
-}
-
-void printRoundRobinFinishedExecuting() {
-    if(!DEBUG) return;
-    printf("\n_________________________________________________________\n");
-    printf("Round Robin finished executing\n");
-    printf("\n_________________________________________________________\n");
-}
