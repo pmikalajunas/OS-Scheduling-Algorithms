@@ -42,25 +42,25 @@ void printComparisonData(LinkedList *completedQueue) {
         
     } while((curProcess = curProcess->next));
 
-    data.averageTurnaroundTime = totalTurnaroundTime / totalNodes;
-    data.averageWaitingTime = totalWaitingTime / totalNodes;
-    data.averageCompletionTime = totalCompletionTime / totalNodes;
-    data.averageBurstTime = totalBurstTime / totalNodes;
-    data.averageArrivalTime = totalArrivalTime / totalNodes;
-    data.averageResponseTime = totalResponseTime / totalNodes;
-    data.throughput = totalNodes / timeElapsed;
+    data->averageTurnaroundTime = totalTurnaroundTime / totalNodes;
+    data->averageWaitingTime = totalWaitingTime / totalNodes;
+    data->averageCompletionTime = totalCompletionTime / totalNodes;
+    data->averageBurstTime = totalBurstTime / totalNodes;
+    data->averageArrivalTime = totalArrivalTime / totalNodes;
+    data->averageResponseTime = totalResponseTime / totalNodes;
+    data->throughput = totalNodes / timeElapsed;
 
     printf("\n+-------------------------------------------------------------------------------------+\n");
     printf("|                                  Statistics                                         |\n");
     printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
     printf(" Time Elapsed = ( %d )\n", timeElapsed);
-    printf(" Average Turnaround Time = ( %f )\n", data.averageTurnaroundTime);
-    printf(" Average Waiting Time = ( %f )\n", data.averageWaitingTime);
-    printf(" Average Completion Time = ( %f )\n", data.averageCompletionTime);
-    printf(" Average Burst Time = ( %f )\n", data.averageBurstTime);
-    printf(" Average Arrival Time = ( %f )\n", data.averageArrivalTime);
-    printf(" Average Response Time = ( %f )\n" , data.averageResponseTime);
-    printf(" Throughput = ( %f )\n", data.throughput);
+    printf(" Average Turnaround Time = ( %f )\n", data->averageTurnaroundTime);
+    printf(" Average Waiting Time = ( %f )\n", data->averageWaitingTime);
+    printf(" Average Completion Time = ( %f )\n", data->averageCompletionTime);
+    printf(" Average Burst Time = ( %f )\n", data->averageBurstTime);
+    printf(" Average Arrival Time = ( %f )\n", data->averageArrivalTime);
+    printf(" Average Response Time = ( %f )\n" , data->averageResponseTime);
+    printf(" Throughput = ( %f )\n", data->throughput);
     printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
 
 }
