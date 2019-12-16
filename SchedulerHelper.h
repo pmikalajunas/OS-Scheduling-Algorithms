@@ -137,8 +137,11 @@ void discardProcess(Node *node, LinkedList *completedQueue) {
     node->process->completionTime = timeElapsed;
     node->process->turnAroundTime = timeElapsed - node->process->arrivalTime;
     node->process->waitingTime = node->process->turnAroundTime - node->process->burstTime;
-    printf("Process (ID: %d) has finished, timeElapsed: (%d)\n",
-            node->process->pId, timeElapsed);
+    if(DEBUG) {
+        printf("Process (ID: %d) has finished, timeElapsed: (%d)\n",
+                node->process->pId, timeElapsed);
+    }
+
     printProcessInfo(node->process);
     append_linked_list(completedQueue, node->process);
     free(node);
@@ -167,7 +170,9 @@ void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue) {
  * */
 void putProcessBack(LinkedList *processQueue, Node *node) {
     append_linked_list(processQueue, node->process);
-    printf("Process (ID: %d) appended back to the queue.\n", node->process->pId);
+    if(DEBUG) {
+        printf("Process (ID: %d) appended back to the queue.\n", node->process->pId);
+    }
     printProcessInfo(node->process);
 }
 
@@ -389,4 +394,11 @@ void printTimeInfo(int timeElapsed, int timeSpentOnIteration, int remainingTime)
 void printLine() {
     if(!DEBUG) return;
     printf("\n____________________________________________________________________________\n"); 
+}
+
+void printRoundRobinFinishedExecuting() {
+    if(!DEBUG) return;
+    printf("\n_________________________________________________________\n");
+    printf("Round Robin finished executing\n");
+    printf("\n_________________________________________________________\n");
 }

@@ -2,6 +2,13 @@
 #include "./RR.h"
 #include "./FCFS.h"
 
+/**
+ * Implementation of multi level queue scheduling algorithm.
+ * First queue is served by RR algorithm.
+ * Second queue is serverd by FCFS algorithm.
+ * When process completes executing (but it's done) it gets placed on 2nd queue.
+ * Once we finish executing first queue, we move on to the second queue.
+ * */
 int main(int argc, char *argv[]) {
 
     if(validateInput(argc, argv) == INPUT_ERROR) {
@@ -38,9 +45,8 @@ int main(int argc, char *argv[]) {
     bubbleSort(waitingQueue->head);
 
     completedQueueRR = roundRobin(RRQueue, waitingQueue, FCFSQueue);
-    printf("\n_________________________________________________________\n");
-    printf("Round Robin finished executing\n");
-    printf("\n_________________________________________________________\n");
+    printRoundRobinFinishedExecuting();
+
     completedQueueFCFS = firstComeFirstServed(FCFSQueue, waitingQueue, NULL);
     
     
