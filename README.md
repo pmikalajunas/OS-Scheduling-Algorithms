@@ -59,7 +59,7 @@ If the native compile command produces errors, you should explicitly define that
 
 ### C Files
 
-| File | Use |
+| File Name | Use |
 |--------|--------------------------------------------------------------------------|
 | FCFS.c | Runs the FCFS scheduling algorithm using the FCFS.h file. |
 | MLFQ.c | Runs the MLFQ scheduling algorithm using both the FCFS.h and RR.h files. |
@@ -67,7 +67,7 @@ If the native compile command produces errors, you should explicitly define that
 
 ### Compiled Files
 
-| File | Use |
+| File Name | Use |
 |------|-------------------------------------------|
 | FCFS | Compiled file used to run FCFS algorithm. |
 | MLFQ | Compiled file used to run MLFQ algorithm. |
@@ -77,7 +77,7 @@ If the native compile command produces errors, you should explicitly define that
 
 # Constraints
 
-In our environment, we successfully tested data up to the following limits, and therefore we placed the following constraints to ensure the program remains stable. However, these numbers are just constants in Constants.h and can be changed.
+In our environment, we successfully tested data up to the following limits, and therefore we placed the following constraints to ensure the program remains stable. However, these numbers are just constants in `Constants.h` and can be changed.
 
 | Constraint                | Explanation                                                     | Name of Constant |
 |---------------------------|-----------------------------------------------------------------|------------------|
