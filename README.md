@@ -22,16 +22,23 @@ To run either of the other two algorithms, simply replace `RR` with `FCFS` or `M
 ### Recompiling the program
 
 #### Toggle CPU clock print statements 
-It's possible to show or hide the complete process of how the algorithm calculates the final answers. This can be toggled using the `DEBUG` flag in `DEBUG.h`. If this flag is set to true, the state of the CPU at each clock tick will be printed along with the final table. If it's set to false, only the final tables will be shown.
+It's possible to show or hide the complete process of how the algorithm calculates the final answers. This can be toggled using the `DEBUG` flag in `Debug.h`. If this flag is set to true, the state of the CPU at each clock tick will be printed along with the final tables. If it's set to false, only the final tables will be shown.
 
 #### Change time quantum for round robin
 The time quantum for round robin is stored in a integer constant in `SchedulerHelper.h` called `TIME_QUANTUM`. This value can be changed to use a different time quantum. To do this, simply change the value and then recompile the file.
 
-For compilation, we used GCC. Therefore, to recompile the file, we use the command:
+#### Compilation
+
+For compilation, we used GCC. Therefore, to recompile the file, we use these commands:
 ```
 gcc -o RR RR.c
 ```
-(Again, the `RR` can be replaced with `FCFS` or `MLFQ` to recompile those programs.)
+```
+gcc -o FCFS FCFS.c
+``` 
+```
+gcc -o MLFQ MLFQ.c
+```
 
 ## Files in the repository
 ### Header Files
