@@ -73,6 +73,7 @@ void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue) {
         append_linked_list(processQueue, candidateNode->process);
 
         printAddedNodeInfo(candidateNode);
+        free_node(candidateNode, false);
         candidateNode = peek_head_linked_list(waitingQueue);
     }
 }

@@ -72,12 +72,13 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, Linke
 
         // If process is not done yet add it back to the processing queue.
         if(node->process->remainingTime > 0) {
-            append_linked_list(appendingQueue, node->process);
+            append_linked_list(appendingQueue, node->process);            
             if(DEBUG) {
                 printf("Process (ID: %d) appended back to the queue.\n", node->process->pId);
             }
             
             printProcessInfo(node->process);
+            free_node(node, false);
         } else {
             discardProcess(node, completedQueue);
         }
