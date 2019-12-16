@@ -20,5 +20,6 @@ typedef struct ComparisonData
     float averageWaitingTime;
     float averageCompletionTime;
     float averageResponseTime;
+    float throughput;
 } ComparisonData;
 // --------------------------------------------------- 

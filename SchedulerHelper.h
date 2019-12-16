@@ -26,7 +26,7 @@ int const INPUT_ERROR = 1; // Input error code, if the cmd input is incorrect.
 int const SUCCESSFUL_EXECUTION = 0; // Returned with successful execution
 // ---------------------------------------------------
 
-// -------------- FUNCTION DEFINITIONS ---------------
+// -------------- FUNCTION DEFINITIONS --------------- 
 void printAddedNodeInfo(Node *addedNode);
 void printProcessInfo(Process *process);
 void printGuidelines();
@@ -272,15 +272,18 @@ void printComparisonData(LinkedList *completedQueue) {
     data.averageBurstTime = totalBurstTime / totalNodes;
     data.averageArrivalTime = totalArrivalTime / totalNodes;
     data.averageResponseTime = totalResponseTime / totalNodes;
+    data.throughput = totalNodes / timeElapsed;
 
     printf("________________________________________________\n");
     printf("                     Statistics                 \n");
+    printf(" Time Elapsed = ( %d )\n", timeElapsed);
     printf(" Average Turnaround Time = ( %f )\n", data.averageTurnaroundTime);
     printf(" Average Waiting Time = ( %f )\n", data.averageWaitingTime);
     printf(" Average Completion Time = ( %f )\n", data.averageCompletionTime);
     printf(" Average Burst Time = ( %f )\n", data.averageBurstTime);
     printf(" Average Arrival Time = ( %f )\n", data.averageArrivalTime);
     printf(" Average Response Time = ( %f )\n" , data.averageResponseTime);
+    printf(" Throughput = ( %f )\n", data.throughput);
     printf("________________________________________________\n");
 
 }
@@ -291,7 +294,7 @@ void printComparisonData(LinkedList *completedQueue) {
 void printAddedNodeInfo(Node *addedNode) {
     printf("\n+++++++++++++++++++++++++++++++++++++++++++++++\n");
     printf("\nNode (ID: %d) is added from the waiting queue\n",
-            addedNode->process->pId);
+            addedNode->process->pId);   
     printf("Time elapsed: %d\n", addedNode->process->arrivalTime);
     printf("\n+++++++++++++++++++++++++++++++++++++++++++++++\n");
 }
