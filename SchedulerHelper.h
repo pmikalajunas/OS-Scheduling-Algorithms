@@ -5,6 +5,7 @@
 #include <math.h>
 #include <ctype.h>
 
+#include "./Debug.h"
 #include "./Structures.h"
 #include "./LinkedList.h"
 #include "./BubbleSort.h"
@@ -289,6 +290,7 @@ void printComparisonData(LinkedList *completedQueue) {
  * Prints information about the node which was added from the waiting queue.
  * */
 void printAddedNodeInfo(Node *addedNode) {
+    if(!DEBUG) return;
     printf("\n+++++++++++++++++++++++++++++++++++++++++++++++\n");
     printf("\nNode (ID: %d) is added from the waiting queue\n",
             addedNode->process->pId);
@@ -300,6 +302,7 @@ void printAddedNodeInfo(Node *addedNode) {
  *  Prints all the information about the process once it finishes executing.
  * */
 void printProcessInfo(Process *process) {
+    if(!DEBUG) return;
     printf("    - Completion time: (%d)\n", process->completionTime);
     printf("    - Turn-around time: (%d)\n", process->turnAroundTime);
     printf("    - Waiting time: (%d)\n", process->waitingTime);
@@ -355,6 +358,7 @@ void printProcessTable(LinkedList *completedQueue) {
  * Used in both RR and FCFS to print information on each iteration.
  * */
 void printProcessingHeader(Node *node) {
+    if(!DEBUG) return;
     printf("\ntimeElapsed: (%d)", timeElapsed);
     printf("\n____________________________________________________________________________\n");
     printf("\nProcess (ID: %d) is being processed\n", node->process->pId);
@@ -365,8 +369,21 @@ void printProcessingHeader(Node *node) {
  * Informs about the empty processing queue, prints out the elapsed time.
  * */
 void printEmptyQueueError() {
+    if(!DEBUG) return;
     printf("\n__________________________________________________________\n");
     printf("Processing queue is empty, proceeding with another cycle.\n");
     printf("timeElapsed: (%d)\n", timeElapsed);
     printf("\n__________________________________________________________\n");
+}
+
+
+void printTimeInfo(int timeElapsed, int timeSpentOnIteration, int remainingTime) {
+    if(!DEBUG) return;
+    printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
+            timeElapsed, timeSpentOnIteration, remainingTime);
+}
+
+void printLine() {
+    if(!DEBUG) return;
+    printf("\n____________________________________________________________________________\n"); 
 }

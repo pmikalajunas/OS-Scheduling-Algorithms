@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     printf("\n_________________________________________________________\n");
     printf("Round Robin finished executing\n");
     printf("\n_________________________________________________________\n");
-    completedQueueFCFS = firstComeFirstServe(FCFSQueue, waitingQueue);
+    completedQueueFCFS = firstComeFirstServed(FCFSQueue, waitingQueue, NULL);
     
     
     LinkedList *completedQueue = merge_linked_lists(completedQueueRR, completedQueueFCFS);

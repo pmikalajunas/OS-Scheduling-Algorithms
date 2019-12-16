@@ -7,19 +7,19 @@
 
 /**
  * RoundRobin scheduling algorithm implementation.
- * Returns a queue of completed processes, in their order of completion.
  * Simulates CPU clock cycle, assumes that one CPU clock cycle is one milisecond.
  * Each iteration of the loop is one clock cycle.
- * Takes list of of processes in processQueue, without the arrival time.
- * Takes a list of processes in waitingQueue, with arrival time.
+ * @param processQueueTakes list of of processes in processQueue, without the arrival time.
+ * @param waitingQueue Takes a list of processes in waitingQueue, with arrival time.
+ * @param appendingQueue Queue which will be used to store processes that have left cpu ...
+ * ... but haven't finished, in MLFQ implementation another queue is passed
+ * @return Returns a queue of completed processes, in their order of completion.
  * */
 LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, LinkedList *appendingQueue) {
 
 
     // Defines how much time we spent executing the current process.
     int timeSpentOnIteration = 0;
-
-    // A list of processes which have finished executing.
     LinkedList *completedQueue = initialise_linked_list();
 
     // We have to keep the algorithm until we have processes left in either process or waiting queue.
@@ -56,12 +56,12 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, Linke
                 node->process->responseTime = timeElapsed - node->process->arrivalTime;
             }
 
-            printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
-             timeElapsed, timeSpentOnIteration, remainingTime);
+
+            printTimeInfo(timeElapsed, timeSpentOnIteration, remainingTime);
 
             addWaitingNode(waitingQueue, processQueue);
         }
-        printf("\n____________________________________________________________________________\n"); 
+        printLine();
             
 
         node->process->timeSpentProcessing += timeSpentOnIteration;
@@ -73,7 +73,10 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, Linke
         // If process is not done yet add it back to the processing queue.
         if(node->process->remainingTime > 0) {
             append_linked_list(appendingQueue, node->process);
-            printf("Process (ID: %d) appended back to the queue.\n", node->process->pId);
+            if(DEBUG) {
+                printf("Process (ID: %d) appended back to the queue.\n", node->process->pId);
+            }
+            
             printProcessInfo(node->process);
         } else {
             discardProcess(node, completedQueue);

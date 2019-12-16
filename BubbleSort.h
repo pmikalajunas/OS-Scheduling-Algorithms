@@ -1,5 +1,7 @@
 
-/* function to swap data of two nodes a and b*/
+/**
+ * Swaps processes between two nodes of the linkedList.
+ * */
 void swap(Node *a, Node *b) 
 { 
     Process *temp = a->process; 
@@ -8,7 +10,10 @@ void swap(Node *a, Node *b)
 } 
 
 
-
+/**
+ * Implementation of Bubble Sort for Linked List.
+ * Sorts processes by their arrival time in ascending order.
+ * */
 void bubbleSort(Node *start) 
 { 
     int swapped, i; 

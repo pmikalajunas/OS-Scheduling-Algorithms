@@ -5,13 +5,21 @@
 #endif
 
 
+/**
+ * Implementation of First Come First Served process scheduling algorithm.
+ * Method simulates CPU clock ticks, one iteration of a loop is one clock tick or 1ms
+ * 
+ * @pararm processQueue - is the queue containing processes that are ready to run.
+ * @param waitingQueue - is the queue containing processes with arrival time.
+ * @param NOTUSED - is left there for further implementation of additional queues for MLFQ,
+ * this argument allows us to call both scheduling methods as arguments
+ * @return Method returns a a list of processes in the order that they were completed.
+ * */
 LinkedList* firstComeFirstServed(LinkedList *processQueue, LinkedList *waitingQueue, LinkedList *NOTUSED){
 
 
     // Defines how much time we spent executing the current process.
     int timeSpentOnIteration = 0;
-
-    // A list of processes which have finished executing.
     LinkedList *completedQueue = initialise_linked_list();
 
     while(!linked_list_empty(processQueue) || !linked_list_empty(waitingQueue)){
@@ -46,12 +54,15 @@ LinkedList* firstComeFirstServed(LinkedList *processQueue, LinkedList *waitingQu
                 node->process->responseTime = timeElapsed - node->process->arrivalTime;
             }
 
-            printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
-             timeElapsed, timeSpentOnIteration, remainingTime);
+
+            printTimeInfo(timeElapsed, timeSpentOnIteration, remainingTime);
+
+
 
             addWaitingNode(waitingQueue, processQueue);
         }
-        printf("\n____________________________________________________________________________\n"); 
+        printLine();
+        
 
         node->process->timeSpentProcessing = node->process->burstTime;
         discardProcess(node, completedQueue);

@@ -20,7 +20,9 @@ Node *initialise_node(void)
 {
     Node *newNode = (Node*) malloc(sizeof(Node));
     if(!newNode){
-        fprintf(stderr, "(initialise_node) Malloc failed at line: (%d)\n", __LINE__);
+        if(DEBUG) {
+            fprintf(stderr, "(initialise_node) Malloc failed at line: (%d)\n", __LINE__);
+        }
         return NULL;
     }
 
@@ -45,7 +47,9 @@ bool linked_list_empty(LinkedList *list) {
 void free_node(Node *node)
 {
     if(!node){
-        fprintf(stderr, "(free_node) Node was NULL at line: (%d)\n", __LINE__);
+        if(DEBUG) {
+            fprintf(stderr, "(free_node) Node was NULL at line: (%d)\n", __LINE__);
+        }
         return;
     }
 
@@ -60,7 +64,10 @@ LinkedList *initialise_linked_list(void)
     LinkedList *newList = (LinkedList*) malloc(sizeof(LinkedList));
 
     if(!newList){
-        fprintf(stderr, "(initialise_linked_list) Malloc failed at line: (%d)\n", __LINE__);
+        if(DEBUG) {
+            fprintf(stderr, "(initialise_linked_list) Malloc failed at line: (%d)\n", __LINE__);
+        }
+        
         return NULL;
     }
 
@@ -79,14 +86,20 @@ Node *append_linked_list(LinkedList *list, Process *process)
 
     /* is list NULL??? is data null???*/
     if(!list){
-        fprintf(stderr, "(append_linked_list) (List/data) was(were) NULL at line: (%d)\n", __LINE__);
+        if(DEBUG) {
+            fprintf(stderr, "(append_linked_list) (List/data) was(were) NULL at line: (%d)\n", __LINE__);
+        }
+        
         return NULL;
     }
 
     /* Initializing data */
     newNode = initialise_node();
     if(!newNode){
-        fprintf(stderr, "(append_linked_list) Failure initializing new node at line: (%d)\n", __LINE__);
+        if(DEBUG) {
+            fprintf(stderr, "(append_linked_list) Failure initializing new node at line: (%d)\n", __LINE__);
+        }
+        
         return NULL;
     }
 
@@ -111,19 +124,28 @@ Node *append_linked_list(LinkedList *list, Process *process)
     return newNode;
 }
 
-
+/**
+ * Merge two given linked lists.
+ * Appends contents of second linked list one by one to the fist linked list.
+ * If one linked list is empty, it returns the other one.
+ * */
 LinkedList *merge_linked_lists(LinkedList *first_list, LinkedList *second_list) {
 
     // If the first list is empty, simply return the second list.
     if(!first_list || !first_list->head){
-        printf("(merge_linked_lists) First list was empty!");
+        if(DEBUG) {
+            printf("(merge_linked_lists) First list was empty!");
+        }
+        
         free(first_list);
         return second_list;
     }
 
     // If the second is empty, simply return the first list.
     if(!second_list || !second_list->head){
-        printf("(merge_linked_lists) Second list was empty!");
+        if(DEBUG) {
+            printf("(merge_linked_lists) Second list was empty!");
+        }
         free(second_list);
         return first_list;
     }
@@ -188,7 +210,10 @@ void free_linked_list(LinkedList *list)
 {
     /* is list NULL??? */
     if(!list){
-        fprintf(stderr, "(free_linked_list) List was NULL at line: (%d)\n", __LINE__);
+        if(DEBUG) {
+            fprintf(stderr, "(free_linked_list) List was NULL at line: (%d)\n", __LINE__);
+        }
+        
         return;
     }
 
