@@ -95,7 +95,7 @@ bool verifyAllInputsInt(int argc,  char **argv) {
     // check all int 
     for(int i = 1; i < argc; i++) {
       if(!isInt(argv[i])) {
-        printf("(ERROR) All inputs need to be integers");
+        printf("(ERROR) All inputs has to be positive integers!\n");
         return false;
       }
     }
@@ -180,18 +180,24 @@ void putProcessBack(LinkedList *processQueue, Node *node) {
 /**
  * Validates input by checking if we have right amount of arguments.
  * Checks if every character is an integer.
+ * Checks if there is any input at all!
  * Returns INPUT_ERROR if input is user input is not suitable.
  * Returns 0 if input is correct.
  * */
 int validateInput(int argc, char *argv[]) {
-    if(isEvenNumberOfArguments(argc)) {
+
+    if(argc <= 1) {
         printGuidelines();
         return INPUT_ERROR;
     }
 
+    if(isEvenNumberOfArguments(argc)) {
+        printGuidelines();
+        return INPUT_ERROR;
+    }
     if(!verifyAllInputsInt(argc,  argv)) return INPUT_ERROR;
 
-    return 0;
+    return SUCCESSFUL_EXECUTION;
 }
 
 
@@ -237,7 +243,11 @@ int executeSchedulingAlgorithm(LinkedList* (*f)(LinkedList*, LinkedList*, Linked
 }
 
 
-
+/**
+ * Tells if user passed an equal number of arguments.
+ * It's important because we have to have arrival ...
+ * ... and burst time for every process.
+ * */
 bool isEvenNumberOfArguments(int argc) {
     return (argc - 1) % 2 != 0;
 }
@@ -280,8 +290,9 @@ void printComparisonData(LinkedList *completedQueue) {
     data.averageResponseTime = totalResponseTime / totalNodes;
     data.throughput = totalNodes / timeElapsed;
 
-    printf("________________________________________________\n");
-    printf("                     Statistics                 \n");
+    printf("\n+-------------------------------------------------------------------------------------+\n");
+    printf("|                                  Statistics                                         |\n");
+    printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
     printf(" Time Elapsed = ( %d )\n", timeElapsed);
     printf(" Average Turnaround Time = ( %f )\n", data.averageTurnaroundTime);
     printf(" Average Waiting Time = ( %f )\n", data.averageWaitingTime);
@@ -290,7 +301,7 @@ void printComparisonData(LinkedList *completedQueue) {
     printf(" Average Arrival Time = ( %f )\n", data.averageArrivalTime);
     printf(" Average Response Time = ( %f )\n" , data.averageResponseTime);
     printf(" Throughput = ( %f )\n", data.throughput);
-    printf("________________________________________________\n");
+    printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
 
 }
 
@@ -325,11 +336,12 @@ void printProcessInfo(Process *process) {
  * Prints information on how to use the program, if user uses wrong CMD arguments. 
  * */
 void printGuidelines() {
+    printf("____________________________________________________________________________\n");
     printf("(ERROR) Invalid parameters.\n");
     printf("Should be in the format of { (Burst time 1) (Arrival time 1) (Burst time 2) (Arrival time 2) ... }\n");
     printf("For example: RR 54 32 2 32 12 2\n");
     printf("Or FCFS 54 32 2 32 12 2\n");
-    printf("\n____________________________________________________________________________\n");
+    printf("____________________________________________________________________________\n");
 }
 
 

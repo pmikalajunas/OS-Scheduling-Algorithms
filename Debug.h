@@ -6,4 +6,4 @@
 #ifdef DEBUG
 #undef DEBUG
 #endif
-#define DEBUG 0
+#define DEBUG 1
