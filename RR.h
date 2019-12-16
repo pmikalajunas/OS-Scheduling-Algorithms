@@ -24,20 +24,23 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, Linke
 
     // We have to keep the algorithm until we have processes left in either process or waiting queue.
     while(!linked_list_empty(processQueue) || !linked_list_empty(waitingQueue)) {
+        
 
         // Adding node from waiting queue, before taking one from processQueue.
-        addWaitingNode(waitingQueue, processQueue, timeElapsed);
+        addWaitingNode(waitingQueue, processQueue);
 
         // Getting the head node of the queue.
         Node *node = remove_head_linked_list(processQueue);
 
+
         // If processing queue is empty, we keep on going with another CPU cycle.
-        if(!node) {           
-            printEmptyQueueError(timeElapsed++);
+        if(!node) {     
+            timeElapsed++;      
+            printEmptyQueueError();            
             continue;
         }
 
-        printProcessingHeader(timeElapsed, node);
+        printProcessingHeader(node);
 
         // Retrieving remaining time considering the current iteration.
         int remainingTime = node->process->remainingTime - timeSpentOnIteration;
@@ -48,10 +51,15 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, Linke
             timeSpentOnIteration++;
             timeElapsed++;
             remainingTime = node->process->remainingTime - timeSpentOnIteration;
+
+            if(node->process->remainingTime == node->process->burstTime) {
+                node->process->responseTime = timeElapsed - node->process->arrivalTime;
+            }
+
             printf("\ntimeElapsed: (%d), timeSpentOnIteration: (%d), remainingTime: (%d)\n",
              timeElapsed, timeSpentOnIteration, remainingTime);
 
-            addWaitingNode(waitingQueue, processQueue, timeElapsed);
+            addWaitingNode(waitingQueue, processQueue);
         }
         printf("\n____________________________________________________________________________\n"); 
             
@@ -68,7 +76,7 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, Linke
             printf("Process (ID: %d) appended back to the queue.\n", node->process->pId);
             printProcessInfo(node->process);
         } else {
-            discardProcess(node, timeElapsed, completedQueue);
+            discardProcess(node, completedQueue);
         }
 
         // Resetting time spent on iteration, next process will take turn.

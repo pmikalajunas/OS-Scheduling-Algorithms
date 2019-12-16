@@ -31,16 +31,16 @@ void printAddedNodeInfo(Node *addedNode);
 void printProcessInfo(Process *process);
 void printGuidelines();
 void printProcessTable(LinkedList *completedQueue);
-void printProcessingHeader(int timeElapsed, Node *node);
-void printEmptyQueueError(int timeElapsed);
+void printProcessingHeader(Node *node);
+void printEmptyQueueError();
 void printComparisonData(LinkedList *completedQueue);
 
 Process *newProcess(int burstTime, int arrivalTime);
 bool isInt(char* input);
 bool verifyAllInputsInt(int argc,  char **argv);
 void readCommandLineArguments(int argc, char *argv[], LinkedList *processQueue, LinkedList *waitingQueue);
-void discardProcess(Node *node, int timeElapsed, LinkedList *completedQueue);
-void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue, int timeElapsed);
+void discardProcess(Node *node, LinkedList *completedQueue);
+void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue);
 bool isEvenNumberOfArguments(int argc);
 int executeSchedulingAlgorithm(LinkedList* (*f)(LinkedList*, LinkedList*, LinkedList*),
                                 int argc, char *argv[]);
@@ -128,7 +128,7 @@ void readCommandLineArguments(int argc, char *argv[], LinkedList *processQueue, 
 Discards process by assigning completion time and turn around time.
 Prints process info and adds process into the queue of completed processes.
 */
-void discardProcess(Node *node, int timeElapsed, LinkedList *completedQueue) {
+void discardProcess(Node *node, LinkedList *completedQueue) {
   
     // We don't want to leave remaining time being negative.
     node->process->remainingTime = 0;
@@ -145,7 +145,7 @@ void discardProcess(Node *node, int timeElapsed, LinkedList *completedQueue) {
 
 // Checks if the current process is ready to be discarded from waiting queue.
 // If arrival time meets the current time, process gets removed and added to the processing queue.
-void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue, int timeElapsed) {
+void addWaitingNode(LinkedList *waitingQueue, LinkedList *processQueue) {
 
     Node *candidateNode = peek_head_linked_list(waitingQueue);
 
@@ -252,7 +252,8 @@ void printComparisonData(LinkedList *completedQueue) {
           totalWaitingTime = 0,
           totalCompletionTime = 0,
           totalBurstTime = 0,
-          totalArrivalTime = 0;
+          totalArrivalTime = 0,
+          totalResponseTime;
 
     do {
         totalNodes++;
@@ -261,6 +262,7 @@ void printComparisonData(LinkedList *completedQueue) {
         totalCompletionTime += curProcess->process->completionTime;
         totalBurstTime += curProcess->process->burstTime;
         totalArrivalTime += curProcess->process->arrivalTime;
+        totalResponseTime += curProcess->process->responseTime;
         
     } while((curProcess = curProcess->next));
 
@@ -269,6 +271,7 @@ void printComparisonData(LinkedList *completedQueue) {
     data.averageCompletionTime = totalCompletionTime / totalNodes;
     data.averageBurstTime = totalBurstTime / totalNodes;
     data.averageArrivalTime = totalArrivalTime / totalNodes;
+    data.averageResponseTime = totalResponseTime / totalNodes;
 
     printf("________________________________________________\n");
     printf("                     Statistics                 \n");
@@ -277,6 +280,7 @@ void printComparisonData(LinkedList *completedQueue) {
     printf(" Average Completion Time = ( %f )\n", data.averageCompletionTime);
     printf(" Average Burst Time = ( %f )\n", data.averageBurstTime);
     printf(" Average Arrival Time = ( %f )\n", data.averageArrivalTime);
+    printf(" Average Response Time = ( %f )\n" , data.averageResponseTime);
     printf("________________________________________________\n");
 
 }
@@ -350,7 +354,7 @@ void printProcessTable(LinkedList *completedQueue) {
  * Prints process ID and time elapsed.
  * Used in both RR and FCFS to print information on each iteration.
  * */
-void printProcessingHeader(int timeElapsed, Node *node) {
+void printProcessingHeader(Node *node) {
     printf("\ntimeElapsed: (%d)", timeElapsed);
     printf("\n____________________________________________________________________________\n");
     printf("\nProcess (ID: %d) is being processed\n", node->process->pId);
@@ -360,7 +364,7 @@ void printProcessingHeader(int timeElapsed, Node *node) {
 /**
  * Informs about the empty processing queue, prints out the elapsed time.
  * */
-void printEmptyQueueError(int timeElapsed) {
+void printEmptyQueueError() {
     printf("\n__________________________________________________________\n");
     printf("Processing queue is empty, proceeding with another cycle.\n");
     printf("timeElapsed: (%d)\n", timeElapsed);
