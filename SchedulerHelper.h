@@ -25,7 +25,11 @@ int const TIME_QUANTUM = 10; // Fixed time quantum.
 int const INCREASE_FACTOR = 2; // Factor by which queue length increases.
 int const INPUT_ERROR = 1; // Input error code, if the cmd input is incorrect.
 int const SUCCESSFUL_EXECUTION = 0; // Returned with successful execution
-// ---------------------------------------------------
+
+// -------------------- CONSTRAINTS --------------------
+int const MAX_ARRIVAL_TIME = 2000;
+int const MAX_BURST_TIME = 2000;
+int const PROCESS_LIMIT = 100; 
 
 // -------------- FUNCTION DEFINITIONS --------------- 
 void printAddedNodeInfo(Node *addedNode);
@@ -35,6 +39,7 @@ void printProcessTable(LinkedList *completedQueue);
 void printProcessingHeader(Node *node);
 void printEmptyQueueError();
 void printComparisonData(LinkedList *completedQueue);
+void printConstraintInfo();
 
 Process *newProcess(int burstTime, int arrivalTime);
 bool isInt(char* input);
@@ -90,13 +95,22 @@ bool isInt(char* input) {
 
 
 // Ensure all inputs to the program are integers.
+// Checks if burst time is more or equal to 1.
+// Checks if both burst time and arrival time meets the constraints.
 bool verifyAllInputsInt(int argc,  char **argv) {
 
-    // check all int 
     for(int i = 1; i < argc; i++) {
       if(!isInt(argv[i])) {
         printf("(ERROR) All inputs has to be positive integers!\n");
         return false;
+      }
+      int x = atoi(argv[i]);
+      if((i % 2 != 0) && (x < 1 || x > MAX_BURST_TIME)) {
+          printf("(ERROR) Burst has to be a number between 1 and %d!\n", MAX_BURST_TIME);
+          return false;
+      } else if (x < 0 || x > MAX_ARRIVAL_TIME) {
+          printf("(ERROR) Arrival time has to be a number between 0 and %d!\n", MAX_ARRIVAL_TIME);
+          return false;
       }
     }
     return true;
@@ -176,20 +190,36 @@ void putProcessBack(LinkedList *processQueue, Node *node) {
     printProcessInfo(node->process);
 }
 
+/** 
+ * Checks if user passed a right amount of processes.
+ * @return Returns False if it doens't.
+ * Returns True if it does.
+ * */
+bool isCorrectNumberOfProcesses(int argc) {
+    return (((argc - 1) / 2) <= PROCESS_LIMIT);
+}
 
 /**
  * Validates input by checking if we have right amount of arguments.
  * Checks if every character is an integer.
  * Checks if there is any input at all!
+ * Checks if input meets our set constraints.
  * Returns INPUT_ERROR if input is user input is not suitable.
  * Returns 0 if input is correct.
  * */
 int validateInput(int argc, char *argv[]) {
 
+    // No arguments.
     if(argc <= 1) {
         printGuidelines();
         return INPUT_ERROR;
     }
+
+    if(!isCorrectNumberOfProcesses(argc)) {
+        printConstraintInfo();
+        return INPUT_ERROR;
+    }
+
 
     if(isEvenNumberOfArguments(argc)) {
         printGuidelines();
@@ -304,6 +334,19 @@ void printComparisonData(LinkedList *completedQueue) {
     printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
 
 }
+
+/**
+ * Prints information about the constraints that we have set.
+ * */
+void printConstraintInfo() {
+        printf("____________________________________________________________________________\n");
+    printf("(ERROR) Invalid parameters.\n");
+    printf("Burst time should be a number between 1 and %d\n", MAX_BURST_TIME);
+    printf("Arrival time should be a number between 0 and %d\n", MAX_ARRIVAL_TIME);
+    printf("You should not be able to enter more than %d processes!\n", PROCESS_LIMIT);
+    printf("____________________________________________________________________________\n");
+}
+
 
 /**
  * Prints information about the node which was added from the waiting queue.
