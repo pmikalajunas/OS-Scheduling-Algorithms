@@ -10,9 +10,9 @@ RR 23 0 21 10 21 33
 would run the round robin algorithm with the following data:
 | Process | Burst time | Arrival time |
 |---------|------------|--------------|
-| p1 | 20 | 0 |
-| p2 | 21 | 10 |
-| p3 | 21 | 33 |
+| p1      | 20         | 0            |
+| p2      | 21         | 10           |
+| p3      | 21         | 33           |
 
 You can specify as much data as you want, but you have to pass an even number of arguments (Because every process needs both a burst time and an arrival time.)
 
