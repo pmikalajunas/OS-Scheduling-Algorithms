@@ -67,3 +67,16 @@ gcc -o MLFQ MLFQ.c
 | FCFS | Compiled file used to run FCFS algorithm. |
 | MLFQ | Compiled file used to run MLFQ algorithm. |
 | RR | Compiled file used to run RR algorithm. |
+
+
+
+# Constraints
+
+In our environment, we successfully tested data up to the following limits, and therefore we placed the following constraints to ensure the program remains stable. However, these numbers are just constants in ScheduleHelper.h and can be changed.
+
+| Constraint                | Explanation                                                     | Name of Constant |
+|---------------------------|-----------------------------------------------------------------|------------------|
+| Burst time limit          | Maximum value set for burst time can be inputted by the user.   | MAX_BURST_TIME   |
+| Arrival time limit        | Maximum value set for arrival time can be inputted by the user. | MAX_ARRIVAL_TIME |
+| Number of processes limit | Maximum number of processes that can be inputted by the user.   | PROCESS_LIMIT    |
+
