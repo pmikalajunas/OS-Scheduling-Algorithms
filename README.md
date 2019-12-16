@@ -8,6 +8,7 @@ For example:
 RR 23 0 21 10 21 33
 ```
 would run the round robin algorithm with the following data:
+
 | Process | Burst time | Arrival time |
 |---------|------------|--------------|
 | p1      | 20         | 0            |
