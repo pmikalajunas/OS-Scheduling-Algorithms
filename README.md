@@ -84,6 +84,3 @@ In our environment, we successfully tested data up to the following limits, and 
 | Burst time limit          | Maximum value set for burst time can be inputted by the user.   | MAX_BURST_TIME   |
 | Arrival time limit        | Maximum value set for arrival time can be inputted by the user. | MAX_ARRIVAL_TIME |
 | Number of processes limit | Maximum number of processes that can be inputted by the user.   | PROCESS_LIMIT    |
-
-
-// when compiling, if ansi c is assumed, use -std=c99
