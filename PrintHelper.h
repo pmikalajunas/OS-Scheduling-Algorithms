@@ -9,15 +9,27 @@
 
 
 void printComparisonData(LinkedList *completedQueue) {
-    ComparisonData data;
+
+    ComparisonData *data = (ComparisonData *) malloc(sizeof(ComparisonData));
+    if(data == NULL) {
+        printf("(printComparisonData) failed to initialise memory for new node!\n");
+        return;
+    }
+    
     Node *curProcess = peek_head_linked_list(completedQueue);
+
+    if(curProcess == NULL) {
+        printf("(printComparisonData) passed queue was empty!\n");
+        return;
+    }
+
     float totalNodes = 0,
           totalTurnaroundTime = 0,
           totalWaitingTime = 0,
           totalCompletionTime = 0,
           totalBurstTime = 0,
           totalArrivalTime = 0,
-          totalResponseTime;
+          totalResponseTime = 0;
 
     do {
         totalNodes++;
