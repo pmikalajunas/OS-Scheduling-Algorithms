@@ -49,6 +49,8 @@ gcc -o MLFQ MLFQ.c
 | MLFQ.h | Header file for the multi-level feedback queue algorithm. Contains most of the code for this algorithm. |
 | RR.h | Header file for round robin algorithm. Contains most of the logic for this algorithm. |
 | ScheduleHelper.h | General header file used in by all of the algorithms. Contains a series of helper functions for the scheduler algorithms. |
+| PrintHelper.h | General header file used by all algorithms containing all of the functions which are used to print data for the user. |
+| InputHelper.h | General header file used by all algorithms, which contains functions related to accepting user input. |
 | Structures.h | General header file which contains the C Structures for each Process and a structure called ComparisonData to organise the statistics for the processes. |
 | D.h | Contains the flag which determines if the information about each clock cycle is printed or not (if it's true, it's printed, else it's not). |
 
@@ -80,3 +82,8 @@ In our environment, we successfully tested data up to the following limits, and 
 | Arrival time limit        | Maximum value set for arrival time can be inputted by the user. | MAX_ARRIVAL_TIME |
 | Number of processes limit | Maximum number of processes that can be inputted by the user.   | PROCESS_LIMIT    |
 
+
+
+// printHelper
+// inputHelper
+// scheduleHelper
