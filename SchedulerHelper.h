@@ -262,7 +262,7 @@ void printComparisonData(LinkedList *completedQueue) {
         totalBurstTime += curProcess->process->burstTime;
         totalArrivalTime += curProcess->process->arrivalTime;
         
-    } while(curProcess = curProcess->next);
+    } while((curProcess = curProcess->next));
 
     data.averageTurnaroundTime = totalTurnaroundTime / totalNodes;
     data.averageWaitingTime = totalWaitingTime / totalNodes;
@@ -341,7 +341,7 @@ void printProcessTable(LinkedList *completedQueue) {
                 node->process->waitingTime, node->process->turnAroundTime,
                 node->process->burstTime, node->process->arrivalTime);
         printf("%s", line);
-    } while(node = node->next); 
+    } while((node = node->next)); 
 
 }
 
