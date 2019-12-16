@@ -21,8 +21,8 @@ int main(int argc, char *argv[]) {
     LinkedList *waitingQueue = initialise_linked_list();
     
     // A list of processes which have finished executing.
-    LinkedList *completedQueueRR = initialise_linked_list();
-    LinkedList *completedQueueFCFS = initialise_linked_list();
+    LinkedList *completedQueueRR;
+    LinkedList *completedQueueFCFS;
    
 
     // Process goes to RR queue
@@ -54,7 +54,11 @@ int main(int argc, char *argv[]) {
     printProcessTable(completedQueue);
     printComparisonData(completedQueue);
 
-    free_linked_list(completedQueue);
+    free_linked_list(completedQueue, true);
+    free_linked_list(waitingQueue, true);
+    free_linked_list(RRQueue, true);
+    free_linked_list(FCFSQueue, true);
+
 
 }
 

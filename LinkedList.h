@@ -13,6 +13,53 @@ typedef struct LinkedList {
     Node *tail;
 } LinkedList;
 
+
+/* free memory for node *node */
+/* print an error message and return if node is NULL */
+/* freeProcess frees the process memory if set to true*/
+void free_node(Node *node, bool freeProcess)
+{
+    if(!node){
+        if(DEBUG) {
+            fprintf(stderr, "(free_node) Node was NULL at line: (%d)\n", __LINE__);
+        }
+        return;
+    }
+
+    if(freeProcess) {
+        free(node->process);
+    }
+    
+    free(node);
+}
+
+/* free memory for linked list *list */
+/* frees memory for all nodes in linked list and list itself */
+/* print an error message and return if list is NULL */
+/* freeProcess frees the process memory if set to true*/
+void free_linked_list(LinkedList *list, bool freeProcess)
+{
+    /* is list NULL??? */
+    if(!list){
+        if(DEBUG) {
+            fprintf(stderr, "(free_linked_list) List was NULL at line: (%d)\n", __LINE__);
+        }
+        return;
+    }
+
+    /* freeing each node */
+    while(list->head){
+        Node *temp = list->head;
+        list->head = list->head->next;
+        /* freeing the node */
+        free_node(temp, freeProcess);
+    }
+
+    /* ant the list itself... */
+    free(list);
+}
+
+
 /* create a new node */
 /* returns a pointer to the newly created node */
 /* print an error message and return NULL if an error occurs */
@@ -42,19 +89,6 @@ bool linked_list_empty(LinkedList *list) {
     return false;
 }
 
-/* free memory for node *node */
-/* print an error message and return if node is NULL */
-void free_node(Node *node)
-{
-    if(!node){
-        if(DEBUG) {
-            fprintf(stderr, "(free_node) Node was NULL at line: (%d)\n", __LINE__);
-        }
-        return;
-    }
-
-    free(node);
-}
 
 /* create a new linked list */
 /* returns a pointer to the newly created list */
@@ -137,7 +171,7 @@ LinkedList *merge_linked_lists(LinkedList *first_list, LinkedList *second_list) 
             printf("(merge_linked_lists) First list was empty!");
         }
         
-        free(first_list);
+        free_linked_list(first_list, true);
         return second_list;
     }
 
@@ -146,16 +180,17 @@ LinkedList *merge_linked_lists(LinkedList *first_list, LinkedList *second_list) 
         if(DEBUG) {
             printf("(merge_linked_lists) Second list was empty!");
         }
-        free(second_list);
+        free_linked_list(second_list, true);
         return first_list;
     }
 
-    while(second_list->head){
-        append_linked_list(first_list, second_list->head->process); 
-        second_list->head = second_list->head->next;
+    Node *tempHead = second_list->head;
+    while(tempHead){
+        append_linked_list(first_list, tempHead->process); 
+        tempHead = tempHead->next;
     }
 
-    free(second_list);
+    free_linked_list(second_list, false);
     return first_list;
 }
 
@@ -202,30 +237,3 @@ Node *peek_head_linked_list(LinkedList *list)
 }
 
 
-
-/* free memory for linked list *list */
-/* frees memory for all nodes in linked list and list itself */
-/* print an error message and return if list is NULL */
-void free_linked_list(LinkedList *list)
-{
-    /* is list NULL??? */
-    if(!list){
-        if(DEBUG) {
-            fprintf(stderr, "(free_linked_list) List was NULL at line: (%d)\n", __LINE__);
-        }
-        
-        return;
-    }
-
-    /* freeing each node */
-    while(list->head){
-        Node *temp = list->head;
-        free(temp->process);
-        list->head = list->head->next;
-        /* freeing the node */
-        free_node(temp);
-    }
-
-    /* ant the list itself... */
-    free(list);
-}

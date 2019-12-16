@@ -126,9 +126,9 @@ int executeSchedulingAlgorithm(LinkedList* (*f)(LinkedList*, LinkedList*, Linked
     printComparisonData(completedQueue);
 
     // Free the allocated memory for both queues.
-    free_linked_list(processQueue);
-    free_linked_list(waitingQueue);
-    free_linked_list(completedQueue);
+    free_linked_list(processQueue, true);
+    free_linked_list(waitingQueue, true);
+    free_linked_list(completedQueue, true);
 
     return SUCCESSFUL_EXECUTION;
 }

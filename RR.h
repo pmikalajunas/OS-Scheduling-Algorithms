@@ -46,7 +46,7 @@ LinkedList* roundRobin(LinkedList *processQueue, LinkedList *waitingQueue, Linke
         int remainingTime = node->process->remainingTime - timeSpentOnIteration;
 
         // We keep running through CPU cycles while process is being processed.
-        // We check if there are nodes in the waiting queue and we make sure TIME_QUANTUM is not exeeded.
+        // We check if there are nodes in the waiting queue and we make sure TIME_QUANTUM is not exceeded.
         while(remainingTime && (TIME_QUANTUM > timeSpentOnIteration)) {
             timeSpentOnIteration++;
             timeElapsed++;
