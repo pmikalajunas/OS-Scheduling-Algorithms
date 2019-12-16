@@ -220,6 +220,7 @@ void free_linked_list(LinkedList *list)
     /* freeing each node */
     while(list->head){
         Node *temp = list->head;
+        free(temp->process);
         list->head = list->head->next;
         /* freeing the node */
         free_node(temp);

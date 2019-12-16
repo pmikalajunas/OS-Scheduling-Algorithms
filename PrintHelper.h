@@ -8,19 +8,19 @@
  * */
 
 
-void printComparisonData(LinkedList *completedQueue) {
+ComparisonData *collectComparisonData(LinkedList *completedQueue) {
 
     ComparisonData *data = (ComparisonData *) malloc(sizeof(ComparisonData));
     if(data == NULL) {
         printf("(printComparisonData) failed to initialise memory for new node!\n");
-        return;
+        return NULL;
     }
     
     Node *curProcess = peek_head_linked_list(completedQueue);
 
     if(curProcess == NULL) {
         printf("(printComparisonData) passed queue was empty!\n");
-        return;
+        return NULL;
     }
 
     float totalNodes = 0,
@@ -50,6 +50,16 @@ void printComparisonData(LinkedList *completedQueue) {
     data->averageResponseTime = totalResponseTime / totalNodes;
     data->throughput = totalNodes / timeElapsed;
 
+    return data;
+}
+
+void printComparisonData(LinkedList *completedQueue) {
+
+    ComparisonData *data = collectComparisonData(completedQueue);
+    if(data == NULL) {
+        return;
+    }
+
     printf("\n+-------------------------------------------------------------------------------------+\n");
     printf("|                                  Statistics                                         |\n");
     printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
@@ -63,7 +73,9 @@ void printComparisonData(LinkedList *completedQueue) {
     printf(" Throughput = ( %f )\n", data->throughput);
     printf("+-----+-----------------+--------------+------------------+------------+--------------+\n");
 
+    free(data);
 }
+
 
 /**
  * Prints information about the constraints that we have set.
