@@ -40,6 +40,8 @@ gcc -o FCFS FCFS.c
 gcc -o MLFQ MLFQ.c
 ```
 
+If the native compile command produces errors, you should explicitly define that the program should be compiled with c99 standards because our program uses c99 features. To do this, include the `-std=c99` flag.
+
 ## Files in the repository
 ### Header Files
 | File Name | Use |
@@ -53,7 +55,7 @@ gcc -o MLFQ MLFQ.c
 | InputHelper.h | General header file used by all algorithms, which contains functions related to accepting user input. |
 | Constants.h | Contains the constants used throughout the program. |
 | Structures.h | General header file which contains the C Structures for each Process and a structure called ComparisonData to organise the statistics for the processes. |
-| D.h | Contains the flag which determines if the information about each clock cycle is printed or not (if it's true, it's printed, else it's not). |
+| Debug.h | Contains the flag which determines if the information about each clock cycle is printed or not (if it's true, it's printed, else it's not). |
 
 ### C Files
 
@@ -82,3 +84,6 @@ In our environment, we successfully tested data up to the following limits, and 
 | Burst time limit          | Maximum value set for burst time can be inputted by the user.   | MAX_BURST_TIME   |
 | Arrival time limit        | Maximum value set for arrival time can be inputted by the user. | MAX_ARRIVAL_TIME |
 | Number of processes limit | Maximum number of processes that can be inputted by the user.   | PROCESS_LIMIT    |
+
+
+// when compiling, if ansi c is assumed, use -std=c99
