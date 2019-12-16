@@ -7,7 +7,7 @@ For example:
 ```
 RR 23 0 21 10 21 33
 ```
-would run the round robin algorithm with the following data
+would run the round robin algorithm with the following data:
 | Process | Burst time | Arrival time |
 |---------|------------|--------------|
 | p1 | 20 | 0 |
@@ -42,7 +42,7 @@ gcc -o RR RR.c
 | RR.h | Header file for round robin algorithm. Contains most of the logic for this algorithm. |
 | ScheduleHelper.h | General header file used in by all of the algorithms. Contains a series of helper functions for the scheduler algorithms. |
 | Structures.h | General header file which contains the C Structures for each Process and a structure called ComparisonData to organise the statistics for the processes. |
-| Debug.h | Contains the flag which determines if the information about each clock cycle is printed or not (if it's true, it's printed, else it's not). |
+| D.h | Contains the flag which determines if the information about each clock cycle is printed or not (if it's true, it's printed, else it's not). |
 
 ### C Files
 
