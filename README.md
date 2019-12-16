@@ -29,11 +29,16 @@ The time quantum for round robin is stored in a integer constant in `SchedulerHe
 
 #### Compilation
 
-For compilation, we used GCC. Therefore, to recompile the file, we use the command:
+For compilation, we used GCC. Therefore, to recompile the file, we use these commands:
 ```
 gcc -o RR RR.c
 ```
-(Again, the `RR` can be replaced with `FCFS` or `MLFQ` to recompile those programs.)
+```
+gcc -o FCFS FCFS.c
+``` 
+```
+gcc -o MLFQ MLFQ.c
+```
 
 ## Files in the repository
 ### Header Files
