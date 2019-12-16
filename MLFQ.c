@@ -52,6 +52,7 @@ int main(int argc, char *argv[]) {
     LinkedList *completedQueue = merge_linked_lists(completedQueueRR, completedQueueFCFS);
 
     printProcessTable(completedQueue);
+    printComparisonData(completedQueue);
 
     free_linked_list(completedQueue);
 
